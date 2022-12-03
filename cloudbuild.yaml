@@ -155,14 +155,14 @@ steps:
   env:
     - "REGISTRY=${_REGISTRY}"
   args: [ "-j", "4", "build-images"]
-# - name: "make-docker"
-#   id: push-images
-#   waitFor:
-#     - build-images
-#   dir: "build"
-#   env:
-#     - "REGISTRY=${_REGISTRY}"
-#   args: [ "-j", "4", "push"]
+- name: "make-docker"
+  id: push-images
+  waitFor:
+    - build-images
+  dir: "build"
+  env:
+    - "REGISTRY=${_REGISTRY}"
+  args: [ "-j", "4", "push"]
 
 #
 # Build all the SDKs
@@ -250,7 +250,7 @@ steps:
     - "${_REGISTRY}"
   id: e2e-feature-gates
   waitFor:
-    # - push-images
+    - push-images
     - build-e2e
 
 #
@@ -264,7 +264,7 @@ steps:
     - "${_REGISTRY}"
   id: e2e-stable
   waitFor:
-    # - push-images
+    - push-images
     - build-e2e
 
 #
