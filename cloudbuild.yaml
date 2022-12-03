@@ -127,21 +127,21 @@ steps:
 # Push the build image, can run while we do other things.
 #
 
-- name: "make-docker"
-  waitFor:
-    - lint
-  dir: "build"
-  args: ["push-build-image"] # push the build image (which won't do anything if it's already there)
+# - name: "make-docker"
+#   waitFor:
+#     - lint
+#   dir: "build"
+#   args: ["push-build-image"] # push the build image (which won't do anything if it's already there)
 
 #
 # Push the sdk base build image, which can also run while we do other things
 #
 
-- name: "make-docker"
-  waitFor:
-    - ensure-build-sdk-image-base
-  dir: "build"
-  args: ["push-build-sdk-base-image"]
+# - name: "make-docker"
+#   waitFor:
+#     - ensure-build-sdk-image-base
+#   dir: "build"
+#   args: ["push-build-sdk-base-image"]
 
 #
 # Build all the images and sdks, and push them up to the repository
@@ -155,14 +155,14 @@ steps:
   env:
     - "REGISTRY=${_REGISTRY}"
   args: [ "-j", "4", "build-images"]
-- name: "make-docker"
-  id: push-images
-  waitFor:
-    - build-images
-  dir: "build"
-  env:
-    - "REGISTRY=${_REGISTRY}"
-  args: [ "-j", "4", "push"]
+# - name: "make-docker"
+#   id: push-images
+#   waitFor:
+#     - build-images
+#   dir: "build"
+#   env:
+#     - "REGISTRY=${_REGISTRY}"
+#   args: [ "-j", "4", "push"]
 
 #
 # Build all the SDKs
@@ -250,7 +250,7 @@ steps:
     - "${_REGISTRY}"
   id: e2e-feature-gates
   waitFor:
-    - push-images
+    # - push-images
     - build-e2e
 
 #
@@ -264,7 +264,7 @@ steps:
     - "${_REGISTRY}"
   id: e2e-stable
   waitFor:
-    - push-images
+    # - push-images
     - build-e2e
 
 #
