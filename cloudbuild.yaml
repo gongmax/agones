@@ -338,7 +338,6 @@ images:
   - '${_REGISTRY}/agones-sdk'
   - '${_REGISTRY}/agones-ping'
   - '${_REGISTRY}/agones-allocator'
-logsBucket: "gs://agones-build-logs"
 options:
   machineType: 'E2_HIGHCPU_32'
   dynamic_substitutions: true
