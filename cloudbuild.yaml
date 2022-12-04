@@ -333,11 +333,11 @@ substitutions:
   _REGISTRY: us-docker.pkg.dev/${PROJECT_ID}/ci
 tags: ['ci']
 timeout: 7200s
-images:
-  - '${_REGISTRY}/agones-controller'
-  - '${_REGISTRY}/agones-sdk'
-  - '${_REGISTRY}/agones-ping'
-  - '${_REGISTRY}/agones-allocator'
+# images:
+#   - '${_REGISTRY}/agones-controller'
+#   - '${_REGISTRY}/agones-sdk'
+#   - '${_REGISTRY}/agones-ping'
+#   - '${_REGISTRY}/agones-allocator'
 options:
   machineType: 'E2_HIGHCPU_32'
   dynamic_substitutions: true
