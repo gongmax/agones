@@ -116,12 +116,12 @@ steps:
 # Runs the linter -- but also builds the build image, if not able to download
 #
 
-- name: "make-docker"
-  id: lint
-  waitFor:
-    - pull-build-image
-  dir: "build"
-  args: ["lint"] # pull the build image if it exists
+# - name: "make-docker"
+#   id: lint
+#   waitFor:
+#     - pull-build-image
+#   dir: "build"
+#   args: ["lint"] # pull the build image if it exists
 
 #
 # Push the build image, can run while we do other things.
@@ -147,74 +147,74 @@ steps:
 # Build all the images and sdks, and push them up to the repository
 #
 
-- name: "make-docker"
-  id: build-images
-  waitFor:
-    - lint
-  dir: "build"
-  env:
-    - "REGISTRY=${_REGISTRY}"
-  args: [ "-j", "4", "build-images"]
-- name: "make-docker"
-  id: push-images
-  waitFor:
-    - build-images
-  dir: "build"
-  env:
-    - "REGISTRY=${_REGISTRY}"
-  args: [ "-j", "4", "push"]
+# - name: "make-docker"
+#   id: build-images
+#   waitFor:
+#     - lint
+#   dir: "build"
+#   env:
+#     - "REGISTRY=${_REGISTRY}"
+#   args: [ "-j", "4", "build-images"]
+# - name: "make-docker"
+#   id: push-images
+#   waitFor:
+#     - build-images
+#   dir: "build"
+#   env:
+#     - "REGISTRY=${_REGISTRY}"
+#   args: [ "-j", "4", "push"]
 
-#
-# Build all the SDKs
-#
+# #
+# # Build all the SDKs
+# #
 
-- name: "make-docker"
-  id: build-sdks
-  waitFor:
-    - lint
-    - cpp-sdk-build-restore-cache
-    - ensure-build-sdk-image-base
-  dir: "build"
-  args: [ "-j", "4", "--output-sync=target", "build-sdks"]
+# - name: "make-docker"
+#   id: build-sdks
+#   waitFor:
+#     - lint
+#     - cpp-sdk-build-restore-cache
+#     - ensure-build-sdk-image-base
+#   dir: "build"
+#   args: [ "-j", "4", "--output-sync=target", "build-sdks"]
 
 #
 # Cache the cpp sdk build directory, to speed up subsequent builds (considerably)
 #
 
-- name: 'gcr.io/$PROJECT_ID/save_cache'
-  args:
-    - '--bucket=gs://$_CACHE_BUCKET'
-    - '--key=$_CPP_SDK_BUILD_CACHE_KEY-$( checksum sdks/cpp/cmake/prerequisites.cmake )'
-    - '--path=sdks/cpp/.build'
-  id: cpp-sdk-build-save-cache
-  waitFor:
-    - build-sdks
+# - name: 'gcr.io/$PROJECT_ID/save_cache'
+#   args:
+#     - '--bucket=gs://$_CACHE_BUCKET'
+#     - '--key=$_CPP_SDK_BUILD_CACHE_KEY-$( checksum sdks/cpp/cmake/prerequisites.cmake )'
+#     - '--path=sdks/cpp/.build'
+#   id: cpp-sdk-build-save-cache
+#   waitFor:
+#     - build-sdks
 
 #
 # Run the all the automated tests (except e2e) in parallel
 #
 
-- name: "make-docker"
-  id: tests
-  waitFor:
-    - lint
-    - ensure-build-sdk-image-base
-    - htmltest-restore-cache
-    - build-sdks
-  dir: "build"
-  args: [ "-j", "5", "--output-sync=target", "test" ]
+# - name: "make-docker"
+#   id: tests
+#   waitFor:
+#     - lint
+#     - ensure-build-sdk-image-base
+#     - htmltest-restore-cache
+#     - build-sdks
+#   dir: "build"
+#   args: [ "-j", "5", "--output-sync=target", "test" ]
 
 #
 # Cache the htmltest url checks. Faster builds, and lower network flakiness.
 #
-- name: 'gcr.io/$PROJECT_ID/save_cache'
-  args:
-    - '--bucket=gs://$_CACHE_BUCKET'
-    - '--key=$_HTMLTEST_CACHE_KEY'
-    - '--path=site/tmp'
-  id: htmltest-save-cache
-  waitFor:
-    - tests
+# - name: 'gcr.io/$PROJECT_ID/save_cache'
+#   args:
+#     - '--bucket=gs://$_CACHE_BUCKET'
+#     - '--key=$_HTMLTEST_CACHE_KEY'
+#     - '--path=site/tmp'
+#   id: htmltest-save-cache
+#   waitFor:
+#     - tests
 
 #
 # Site preview
@@ -222,21 +222,21 @@ steps:
 
 # don't promote, as it can cause failures when two deploys try and promote at the same time.
 
-- name: "make-docker" # build a preview of the website
-  id: site-static
-  waitFor:
-    - tests
-  dir: "build"
-  args: ["site-static-preview", "site-gen-app-yaml", "SERVICE=preview"]
-- name: "gcr.io/cloud-builders/gcloud" # deploy the preview of the website
-  id: "deploy-site-static"
-  waitFor:
-    - site-static
-  dir: "site"
-  args: ["app", "deploy", ".app.yaml", "--no-promote", "--version=$SHORT_SHA"]
-  env:
-    - GOPATH=/workspace/go
-    - GO111MODULE=on
+# - name: "make-docker" # build a preview of the website
+#   id: site-static
+#   waitFor:
+#     - tests
+#   dir: "build"
+#   args: ["site-static-preview", "site-gen-app-yaml", "SERVICE=preview"]
+# - name: "gcr.io/cloud-builders/gcloud" # deploy the preview of the website
+#   id: "deploy-site-static"
+#   waitFor:
+#     - site-static
+#   dir: "site"
+#   args: ["app", "deploy", ".app.yaml", "--no-promote", "--version=$SHORT_SHA"]
+#   env:
+#     - GOPATH=/workspace/go
+#     - GO111MODULE=on
 
 #
 # Run the e2e tests with FeatureGates inverted compared to Stable
@@ -250,7 +250,7 @@ steps:
     - "${_REGISTRY}"
   id: e2e-feature-gates
   waitFor:
-    - push-images
+    # - push-images
     - build-e2e
 
 #
@@ -264,20 +264,20 @@ steps:
     - "${_REGISTRY}"
   id: e2e-stable
   waitFor:
-    - push-images
+    # - push-images
     - build-e2e
 
 #
 # SDK conformance tests
 #
 
-- name: "make-docker"
-  id: sdk-conformance
-  dir: "build"
-  args: [ "-j", "5", "--output-sync=target", "run-sdk-conformance-tests"]
-  waitFor:
-    - build-images
-    - tests
+# - name: "make-docker"
+#   id: sdk-conformance
+#   dir: "build"
+#   args: [ "-j", "5", "--output-sync=target", "run-sdk-conformance-tests"]
+#   waitFor:
+#     - build-images
+#     - tests
 
 #
 # Cache the CPP conformance build directory, to speed up subsequent builds (considerably)
@@ -296,33 +296,33 @@ steps:
 # Cache the Rust SDK build directory, to speed up subsequent builds (considerably)
 #
 
-- name: 'gcr.io/$PROJECT_ID/save_cache'
-  args:
-    - '--bucket=gs://$_CACHE_BUCKET'
-    - '--key=$_RUST_SDK_BUILD_CACHE_KEY-$( checksum test/sdk/rust/Cargo.toml )'
-    - '--path=test/sdk/rust/.cargo'
-    - '--path=test/sdk/rust/.cargo-targets'
-    - '--no-clobber'
-  id: rust-build-save-cache
-  waitFor:
-    - sdk-conformance
+# - name: 'gcr.io/$PROJECT_ID/save_cache'
+#   args:
+#     - '--bucket=gs://$_CACHE_BUCKET'
+#     - '--key=$_RUST_SDK_BUILD_CACHE_KEY-$( checksum test/sdk/rust/Cargo.toml )'
+#     - '--path=test/sdk/rust/.cargo'
+#     - '--path=test/sdk/rust/.cargo-targets'
+#     - '--no-clobber'
+#   id: rust-build-save-cache
+#   waitFor:
+#     - sdk-conformance
 
 #
 # Zip up artifacts and push to storage
 #
 
-- name: 'gcr.io/cloud-builders/gsutil'
-  waitFor:
-    - build-sdks
-    - tests
-  dir: "sdks/cpp/.archives"
-  args: [ '-m', 'cp', '*.tar.gz', 'gs://agones-artifacts/cpp-sdk']
-- name: 'gcr.io/cloud-builders/gsutil'
-  waitFor:
-    - build-images
-    - tests
-  dir: "cmd/sdk-server/bin"
-  args: [ '-m', 'cp', '*.zip', 'gs://agones-artifacts/sdk-server']
+# - name: 'gcr.io/cloud-builders/gsutil'
+#   waitFor:
+#     - build-sdks
+#     - tests
+#   dir: "sdks/cpp/.archives"
+#   args: [ '-m', 'cp', '*.tar.gz', 'gs://agones-artifacts/cpp-sdk']
+# - name: 'gcr.io/cloud-builders/gsutil'
+#   waitFor:
+#     - build-images
+#     - tests
+#   dir: "cmd/sdk-server/bin"
+#   args: [ '-m', 'cp', '*.zip', 'gs://agones-artifacts/sdk-server']
 
 substitutions:
   _CACHE_BUCKET: agones-build-cache
