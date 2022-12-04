@@ -283,14 +283,14 @@ steps:
 # Cache the CPP conformance build directory, to speed up subsequent builds (considerably)
 #
 
-- name: 'gcr.io/$PROJECT_ID/save_cache'
-  args:
-    - '--bucket=gs://$_CACHE_BUCKET'
-    - '--key=$_CPP_SDK_CONFORMANCE_CACHE_KEY-$( checksum sdks/cpp/cmake/prerequisites.cmake )'
-    - '--path=test/sdk/cpp/sdk'
-  id: cpp-sdk-conformance-save-cache
-  waitFor:
-    - sdk-conformance
+# - name: 'gcr.io/$PROJECT_ID/save_cache'
+#   args:
+#     - '--bucket=gs://$_CACHE_BUCKET'
+#     - '--key=$_CPP_SDK_CONFORMANCE_CACHE_KEY-$( checksum sdks/cpp/cmake/prerequisites.cmake )'
+#     - '--path=test/sdk/cpp/sdk'
+#   id: cpp-sdk-conformance-save-cache
+#   waitFor:
+#     - sdk-conformance
 
 #
 # Cache the Rust SDK build directory, to speed up subsequent builds (considerably)
