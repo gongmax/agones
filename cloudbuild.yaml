@@ -246,7 +246,7 @@ steps:
 - name: 'e2e-runner'
   args:
     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster'
+    - 'e2e-test-cluster-1'
     - "${_REGISTRY}"
   id: e2e-feature-gates
   waitFor:
