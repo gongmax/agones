@@ -248,7 +248,7 @@ steps:
     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
     - 'e2e-test-cluster'
     - "${_REGISTRY}"
-  id: e2e-feature-gates
+  id: e2e-feature-gates-1
   waitFor:
     # - push-images
     - build-e2e
@@ -262,7 +262,7 @@ steps:
     - ''
     - 'e2e-test-cluster'
     - "${_REGISTRY}"
-  id: e2e-stable
+  id: e2e-stable-1
   waitFor:
     # - push-images
     - build-e2e
@@ -272,7 +272,7 @@ steps:
     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
     - 'e2e-test-cluster-1'
     - "${_REGISTRY}"
-  id: e2e-feature-gates
+  id: e2e-feature-gates-2
   waitFor:
     # - push-images
     - build-e2e
@@ -286,7 +286,7 @@ steps:
     - ''
     - 'e2e-test-cluster-1'
     - "${_REGISTRY}"
-  id: e2e-stable
+  id: e2e-stable-2
   waitFor:
     # - push-images
     - build-e2e
