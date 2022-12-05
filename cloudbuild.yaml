@@ -267,53 +267,53 @@ steps:
     # - push-images
     - build-e2e
 
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster-1'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-2
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster-1'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-2
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - ''
-    - 'e2e-test-cluster-1'
-    - "${_REGISTRY}"
-  id: e2e-stable-2
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - ''
+#     - 'e2e-test-cluster-1'
+#     - "${_REGISTRY}"
+#   id: e2e-stable-2
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster-2'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-3
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster-2'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-3
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - ''
-    - 'e2e-test-cluster-2'
-    - "${_REGISTRY}"
-  id: e2e-stable-3
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - ''
+#     - 'e2e-test-cluster-2'
+#     - "${_REGISTRY}"
+#   id: e2e-stable-3
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
 #
 # SDK conformance tests
