@@ -123,6 +123,8 @@ steps:
         echo "Welcome $i times"
         gcloud builds submit --config=cloudbuild1.yaml &
       done
+      wait
+      echo "all done"
   waitFor:
     - build-e2e
 
