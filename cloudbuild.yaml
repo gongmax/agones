@@ -112,14 +112,8 @@ steps:
   id: build-e2e
   waitFor: ['-']
 
-- name: bash
-  script: |
-    #!/usr/bin/env bash
-    for i in 1 2 3 4
-    do
-      echo "Welcome $i times"
-      gcloud builds list
-    done
+- name: gcr.io/cloud-builders/gcloud
+  args: ['builds', 'submit', '--config=cloudbuild1.yaml']
 
 #
 # Runs the linter -- but also builds the build image, if not able to download
