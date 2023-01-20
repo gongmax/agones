@@ -112,8 +112,13 @@ steps:
   id: build-e2e
   waitFor: ['-']
 
-- name: gcr.io/cloud-builders/gcloud
-  args: ['builds', 'submit', '--config=cloudbuild1.yaml']
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: test
+  entrypoint: bash
+  args: 
+   - '-c'
+   - |
+      gcloud builds list
 
 #
 # Runs the linter -- but also builds the build image, if not able to download
