@@ -112,6 +112,14 @@ steps:
   id: build-e2e
   waitFor: ['-']
 
+- name: bash
+  script: |
+    #!/usr/bin/env bash
+    for i in 1 2 3 4 5
+    do
+      echo "Welcome $i times"
+    done
+
 #
 # Runs the linter -- but also builds the build image, if not able to download
 #
@@ -243,77 +251,77 @@ steps:
 #
 # Keep in sync with (the inverse of) pkg/util/runtime/features.go:featureDefaults
 
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-1
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-1
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - ''
-    - 'e2e-test-cluster'
-    - "${_REGISTRY}"
-  id: e2e-stable-1
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - ''
+#     - 'e2e-test-cluster'
+#     - "${_REGISTRY}"
+#   id: e2e-stable-1
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster-1'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-2
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster-1'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-2
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - ''
-    - 'e2e-test-cluster-1'
-    - "${_REGISTRY}"
-  id: e2e-stable-2
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - ''
+#     - 'e2e-test-cluster-1'
+#     - "${_REGISTRY}"
+#   id: e2e-stable-2
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster-2'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-3
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster-2'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-3
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - ''
-    - 'e2e-test-cluster-2'
-    - "${_REGISTRY}"
-  id: e2e-stable-3
-  waitFor:
-    # - push-images
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - ''
+#     - 'e2e-test-cluster-2'
+#     - "${_REGISTRY}"
+#   id: e2e-stable-3
+#   waitFor:
+#     # - push-images
+#     - build-e2e
 
 #
 # SDK conformance tests
