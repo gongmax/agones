@@ -7,3 +7,6 @@ steps:
       echo "Welcome $i times"
       sleep 10
     done
+
+substitutions:
+  _FAVORITE_COLOR: yellow
