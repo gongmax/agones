@@ -10,3 +10,5 @@ steps:
 
 substitutions:
   _FAVORITE_COLOR: yellow
+options:
+    substitution_option: 'ALLOW_LOOSE'
