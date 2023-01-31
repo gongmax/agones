@@ -121,7 +121,7 @@ steps:
       for i in 1 2 3 4
       do
         echo "Welcome $i times"
-        gcloud builds submit --config=cloudbuild1.yaml &
+        gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue &
       done
       wait
       echo "all done"
