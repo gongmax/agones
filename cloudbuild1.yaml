@@ -4,7 +4,6 @@ steps:
   - 'BAR=$_NUM'
   script: |
     #!/usr/bin/env bash
-    echo $BAR
     if [ $BAR = 1 ]
       then exit 1
     fi
