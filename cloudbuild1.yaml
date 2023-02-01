@@ -1,8 +1,10 @@
 steps:
 - name: bash
+  env:
+  - 'BAR=$_NUM'
   script: |
     #!/usr/bin/env bash
-    echo ${_NUM}
+    echo $BAR
     if ${_NUM}=4
       then exit 1
     fi
