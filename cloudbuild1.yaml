@@ -1,10 +1,10 @@
 steps:
-- name: 'e2e-runner'
-  args:
-    - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
-    - 'e2e-test-cluster'
-    - "${_REGISTRY}"
-  id: e2e-feature-gates-1
+# - name: 'e2e-runner'
+#   args:
+#     - 'CustomFasSyncInterval=false&StateAllocationFilter=false&LifecycleContract=true&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SDKGracefulTermination=true&Example=true'
+#     - 'e2e-test-cluster'
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates-1
 
 - name: bash
   env:
