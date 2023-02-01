@@ -19,7 +19,6 @@ steps:
     fi
 
     echo "Welcome $FOO"
-    echo "Welcome $FOOFOO"
     for i in 1 2 3 4
     do
       sleep 20
