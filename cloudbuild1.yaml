@@ -22,8 +22,10 @@ steps:
     done
   id: 'e2e-$_NUM'
 
-# substitutions:
-#     _NUM: '2'
+substitutions:
+    _NUM: '2'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
+
+tags: ['e2e-test']
