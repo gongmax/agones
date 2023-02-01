@@ -20,7 +20,7 @@ steps:
     do
       echo "Welcome $i times"
     done
-  id: 'e2e-${_NUM}'
+  id: 'e2e-$_NUM'
 
 # substitutions:
 #     _NUM: '2'
