@@ -123,7 +123,7 @@ steps:
       
       for cloudProduct in ${cloudProducts[@]}
       do
-        if [ $cloudProducts = generic ]
+        if [ $cloudProduct = generic ]
         then 
           featureWithGate="woshigenericgate"
           featureWithoutGate="woshigeneric"
