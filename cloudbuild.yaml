@@ -135,6 +135,9 @@ steps:
 
       for file in "$dir"/*; do
         printf 'PID %d returned %d\n' "${file##*/}" "$(<"$file")"
+        if [$(<"$file") -eq 1];
+          then exit 1
+        fi
       done
 
       rm -r "$dir"
