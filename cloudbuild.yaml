@@ -118,7 +118,7 @@ steps:
   args: 
    - '-c'
    - |
-      exitCodes=("ff", "gg", "hh")
+      exitCodes=("ff" "gg" "hh")
       for i in 1 2 3 4
       do
         ( gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i; echo $?; exitCodes+=("sss") ) &
@@ -127,6 +127,7 @@ steps:
 
       echo "all done"
 
+      exitCodes+=("out")
       for str in ${exitCodes[@]}; do
         echo "exit code: "
         echo $str
