@@ -8,7 +8,5 @@ steps:
       sleep 10
     done
 
-substitutions:
-  _FAVORITE_COLOR: yellow
 options:
     substitution_option: 'ALLOW_LOOSE'
