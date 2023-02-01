@@ -11,7 +11,6 @@ steps:
     for i in 1 2 3 4
     do
       echo "Welcome $i times"
-      sleep 10
     done
 
 substitutions:
