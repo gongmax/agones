@@ -20,8 +20,8 @@ steps:
       echo "Welcome $i times"
     done
 
-substitutions:
-    _NUM: '2'
+# substitutions:
+#     _NUM: '2'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
