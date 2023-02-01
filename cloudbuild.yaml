@@ -122,7 +122,7 @@ steps:
       for i in 1 2 3 4
       do
         echo "Welcome $i times"
-        { gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i; exitCode+=(&?) }&
+        { gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i ; exitCode+=(&?) ; } &
       done
       wait
 
