@@ -14,7 +14,7 @@ steps:
     done
 
 substitutions:
-    _NUM: 2
+    _NUM: '2'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
