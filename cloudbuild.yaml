@@ -118,10 +118,10 @@ steps:
   args: 
    - '-c'
    - |
-      # exitCodes=("ff" "gg" "hh")
+      dir=$(mktemp -d)
       for i in 1 2 3 4
       do
-        ( gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i; echo $?; echo "whywhywhy"; exitCodes+=("in"); echo "${exitCodes[@]}" ) &
+        ( gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i; echo "$?" > "$dir/$BASHPID" ; ) &
       done
       wait
 
@@ -133,8 +133,11 @@ steps:
       #   echo $str
       # done
 
-      echo "${exitCodes[@]}"
+      for file in "$dir"/*; do
+        printf 'PID %d returned %d\n' "${file##*/}" "$(<"$file")"
+      done
 
+      rm -r "$dir"
       echo "print done"
   waitFor:
     - build-e2e
