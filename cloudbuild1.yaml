@@ -9,21 +9,23 @@ steps:
 - name: bash
   env:
   - 'BAR=$_NUM'
+  - 'FOO=$_FEATURE_WITH_GATE'
+  - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
   script: |
     #!/usr/bin/env bash
     echo $BAR
-    if [ $BAR = 1 ]
+    if [ $BAR = generic ]
       then exit 1
     fi
 
+    echo "Welcome $FOO"
+    echo "Welcome $FOOFOO"
     for i in 1 2 3 4
     do
-      echo "Welcome $i times"
+      sleep 20
     done
+    echo "Welcome $FOOFOO"
   id: e2e-$BAR
-
-substitutions:
-    _NUM: '2'
 
 options:
     substitution_option: 'ALLOW_LOOSE'

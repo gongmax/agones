@@ -119,9 +119,17 @@ steps:
    - '-c'
    - |
       dir=$(mktemp -d)
-      for i in 1 2 3 4
+      cloudProducts=("generic" "gke-autopilot")
+      featureWithGate="woshiautopilotgate"
+      featureWithoutGate="woshiautopilot"
+      for cloudProduct in ${cloudProducts[@]}
       do
-        ( gcloud builds submit --config=cloudbuild1.yaml --substitutions _FAVORITE_COLOR=blue,_NUM=$i; echo "$?" > "$dir/$i" ; ) &
+        if [ $cloudProducts = generic ]
+        then 
+          featureWithGate="woshigenericgate"
+          featureWithoutGate="woshigeneric"
+        fi
+        ( gcloud builds submit --config=cloudbuild1.yaml --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_NUM=$cloudProduct; echo "$?" > "$dir/$cloudProduct" ; ) &
       done
       wait
 
