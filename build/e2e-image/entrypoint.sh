@@ -15,8 +15,8 @@
 # limitations under the License.
 set -e
 FEATURES=$1
-TEST_CLUSTER_NAME=$2
-REGISTRY=$3
+TEST_CLUSTER_NAME=$3
+REGISTRY=$5
 
 echo $FEATURES
 export SHELL="/bin/bash"
