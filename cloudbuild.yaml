@@ -157,7 +157,7 @@ steps:
   args: 
    - '-c'
    - |
-      set -eu
+      set -e
       pids=()
       dir=$(mktemp -d)
       cloudProducts=("generic" "gke-autopilot")
