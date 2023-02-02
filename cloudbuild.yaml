@@ -182,7 +182,7 @@ steps:
               --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation; ) &
           pids+=($!)
           echo "build id: "
-          echo $output
+          echo "$output"
         done
       done
 
