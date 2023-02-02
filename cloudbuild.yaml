@@ -102,77 +102,145 @@ steps:
   dir: "build"
   args: ["ensure-build-sdk-image-base"]
 
-#
-# build the e2e test runner
-#
+# wait for us to be the oldest ongoing build before we run e2es
 
-- name: gcr.io/cloud-builders/docker
-  args: ['build', '-f', 'Dockerfile', '-t', 'e2e-runner', '.']
-  dir: 'build/e2e-image'
-  id: build-e2e
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: e2e-wait-to-become-leader
   waitFor: ['-']
+  script: |
+    #!/usr/bin/env bash
+
+    TS='date --utc +%FT%TZ' # e.g. 2023-01-26T13:30:37Z
+    echo "$(${TS}): Waiting to become oldest running build"
+    while true; do
+      # Filter to running builds within the same TRIGGER_NAME. We use the trigger name to
+      # filter rather than buildTriggerId because there is no substitution available for
+      # buildTriggerId.
+      TRIGGER_FILTER="status=WORKING AND substitutions[TRIGGER_NAME]='${TRIGGER_NAME}'"
+      OLDEST=$(gcloud builds list --filter "${TRIGGER_FILTER}" --format="value(id,startTime)" --sort-by=startTime --limit=1)
+      echo "$(${TS}): Oldest is (id startTime): ${OLDEST}"
+
+      if echo ${OLDEST} | grep -q "${BUILD_ID}"; then
+        echo "$(${TS}): That's us, we're done!"
+        break
+      fi
+
+      sleep 60
+    done
+  timeout: 5400s # 90m - leave an hour for e2es to run on top of the global timeout of 2.5h
+  env:
+  - 'CLOUDSDK_CORE_PROJECT=$PROJECT_ID'
+  - 'BUILD_ID=$BUILD_ID'
+  - 'TRIGGER_NAME=$TRIGGER_NAME'
+
+# cancel all the orphan e2e test cloud builds, fail to cancel any of the build will fail this whole build
 
 - name: 'gcr.io/cloud-builders/gcloud'
   id: cancel-orphan-e2e-tests
   waitFor:
-    - build-e2e
+    - e2e-wait-to-become-leader
   script: |
     #!/usr/bin/env bash
 
-    
-    on_going_builds=($(gcloud builds list --filter "(status="SUCCESS" OR status="FAILURE") AND tags:'e2e-test'" --format="value(id)" | xargs))
+    on_going_builds=($(gcloud builds list --ongoing --filter "tags:'e2e-test'" --format="value(id)" | xargs))
     for on_going_build in ${on_going_builds[@]}
     do
       echo "Cancelling e2e test build $on_going_build"
       gcloud builds cancel $on_going_build
     done
 
-  timeout: 5400s # 90m - leave an hour for e2es to run on top of the global timeout of 2.5h
+# kick off the child e2e test cloud builds in parallel, fail this build if any of the child build fails
 
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: test-$PROJECT_ID
+  id: submit-e2e-test-cloud-build
   entrypoint: bash
   args: 
    - '-c'
    - |
       dir=$(mktemp -d)
       cloudProducts=("generic" "gke-autopilot")
-      
       for cloudProduct in ${cloudProducts[@]}
       do
         if [ $cloudProduct = generic ]
         then 
           featureWithGate="woshigenericgate"
           featureWithoutGate="woshigeneric"
+          testClusterLocation="us-west1-c"
+          testCluster="e2e-test-cluster"
         else
           featureWithGate="woshiautopilotgate"
           featureWithoutGate="woshiautopilot"
+          testClusterLocation="us-west1"
+          testCluster="gke-autopilot-e2e-test-cluster-1-24"
         fi
-        ( gcloud builds submit --config=cloudbuild1.yaml \
-            --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_NUM=$cloudProduct;
-            echo "$?" > "$dir/$cloudProduct-$cloudProduct"; ) &
+        k8sVersions=("1.24")
+        for k8sVersion in ${k8sVersions[@]}
+        do
+          ( gcloud builds submit --config=e2e-test-cloudbuild.yaml \
+              --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation;
+            echo "$?" > "$dir/$cloudProduct-$k8sVersion"; ) &
+        done
       done
       wait
 
-      echo "all done"
-
-      # exitCodes+=("out")
-      # for str in ${exitCodes[@]}; do
-      #   echo "exit code: "
-      #   echo $str
-      # done
-
       for file in "$dir"/*; do
-        printf 'PID %s returned %d\n' "${file##*/}" "$(<"$file")"
-        if [ $(<"$file") -eq 1 ];
-          then exit 1
+        printf '%s returned %d\n' "${file##*/}" "$(<"$file")"
+        if [ $(<"$file") -ne 0 ]
+        then
+          rm -r "$dir"
+          exit 1
         fi
       done
 
       rm -r "$dir"
-      echo "print done"
+      echo "all done"
   waitFor:
     - cancel-orphan-e2e-tests
+
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   id: test-$PROJECT_ID
+#   entrypoint: bash
+#   args: 
+#    - '-c'
+#    - |
+#       dir=$(mktemp -d)
+#       cloudProducts=("generic" "gke-autopilot")
+      
+#       for cloudProduct in ${cloudProducts[@]}
+#       do
+#         if [ $cloudProduct = generic ]
+#         then 
+#           featureWithGate="woshigenericgate"
+#           featureWithoutGate="woshigeneric"
+#         else
+#           featureWithGate="woshiautopilotgate"
+#           featureWithoutGate="woshiautopilot"
+#         fi
+#         ( gcloud builds submit --config=cloudbuild1.yaml \
+#             --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_NUM=$cloudProduct;
+#             echo "$?" > "$dir/$cloudProduct-$cloudProduct"; ) &
+#       done
+#       wait
+
+#       echo "all done"
+
+#       # exitCodes+=("out")
+#       # for str in ${exitCodes[@]}; do
+#       #   echo "exit code: "
+#       #   echo $str
+#       # done
+
+#       for file in "$dir"/*; do
+#         printf 'PID %s returned %d\n' "${file##*/}" "$(<"$file")"
+#         if [ $(<"$file") -eq 1 ];
+#           then exit 1
+#         fi
+#       done
+
+#       rm -r "$dir"
+#       echo "print done"
+#   waitFor:
+#     - cancel-orphan-e2e-tests
 
 #
 # Runs the linter -- but also builds the build image, if not able to download
