@@ -119,7 +119,7 @@ steps:
     #!/usr/bin/env bash
 
     
-    on_going_builds=($(gcloud builds list --ongoing --filter "tags:'e2e-test'" --format="value(id)" | xargs))
+    on_going_builds=($(gcloud builds list "(status="SUCCESS" OR status="FAILURE") AND tags:'e2e-test'" --format="value(id)" | xargs))
     for on_going_build in ${on_going_builds[@]}
     do
       echo "Cancelling e2e test build $on_going_build"
