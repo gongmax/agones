@@ -133,9 +133,6 @@ steps:
         fi
         ( gcloud builds submit --config=cloudbuild1.yaml \
             --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_NUM=$cloudProduct;
-            echo "!!!!!!!!!!!!!!!!!";
-            echo "$dir/$cloudProduct-$cloudProduct";
-            echo "@@@@@@@@@"
             echo "$?" > "$dir/$cloudProduct-$cloudProduct"; ) &
       done
       wait
