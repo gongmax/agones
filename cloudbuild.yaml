@@ -113,7 +113,7 @@ steps:
   waitFor: ['-']
 
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: test
+  id: 'test-$PROJECT_ID'
   entrypoint: bash
   args: 
    - '-c'
