@@ -159,19 +159,18 @@ steps:
    - |
       set -e
       pids=()
-      dir=$(mktemp -d)
       cloudProducts=("generic" "gke-autopilot")
       for cloudProduct in ${cloudProducts[@]}
       do
         if [ $cloudProduct = generic ]
         then 
-          featureWithGate="woshigenericgate"
-          featureWithoutGate="woshigeneric"
+          featureWithGate="CustomFasSyncInterval=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SafeToEvict=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
+          featureWithoutGate=""
           testClusterLocation="us-west1-c"
           testCluster="e2e-test-cluster"
         else
-          featureWithGate="woshiautopilotgate"
-          featureWithoutGate="woshiautopilot"
+          featureWithGate="CustomFasSyncInterval=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SafeToEvict=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
+          featureWithoutGate="SafeToEvict=true&SplitControllerAndExtensions=true"
           testClusterLocation="us-west1"
           testCluster="gke-autopilot-e2e-test-cluster-1-24"
         fi
@@ -189,7 +188,7 @@ steps:
           :
         else
           status=$?
-          echo "One of the subprocesses exited with nonzero status $status. Aborting."
+          echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
           for pid in "${pids[@]}"; do
             # Send a termination signal to all the children, and ignore errors
             # due to children that no longer exist.
