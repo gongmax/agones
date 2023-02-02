@@ -90,7 +90,7 @@ steps:
     echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      sleep 20
+      sleep 30
     done
     echo "Welcome $FOOFOO"
   id: e2e-$BAR
