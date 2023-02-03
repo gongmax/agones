@@ -22,48 +22,48 @@ steps:
 # build the e2e test runner
 #
 
-- name: gcr.io/cloud-builders/docker
-  args: ['build', '-f', 'Dockerfile', '-t', 'e2e-runner', '.']
-  dir: 'build/e2e-image'
-  id: build-e2e
-  waitFor: ['-']
+# - name: gcr.io/cloud-builders/docker
+#   args: ['build', '-f', 'Dockerfile', '-t', 'e2e-runner', '.']
+#   dir: 'build/e2e-image'
+#   id: build-e2e
+#   waitFor: ['-']
 
-  #
-# Run the e2e tests with FeatureGates inverted compared to Stable
-#
-# Keep in sync with (the inverse of) pkg/util/runtime/features.go:featureDefaults
+#   #
+# # Run the e2e tests with FeatureGates inverted compared to Stable
+# #
+# # Keep in sync with (the inverse of) pkg/util/runtime/features.go:featureDefaults
 
-- name: 'e2e-runner'
-  args:
-    - "${_FEATURE_WITH_GATE}"
-    - "${_CLOUD_PRODUCT}"
-    - "${_TEST_CLUSTER_NAME}"
-    - "${_TEST_CLUSTER_LOCATION}"
-    - "${_REGISTRY}"
-  id: e2e-feature-gates
-  waitFor:
-    - build-e2e
+# - name: 'e2e-runner'
+#   args:
+#     - "${_FEATURE_WITH_GATE}"
+#     - "${_CLOUD_PRODUCT}"
+#     - "${_TEST_CLUSTER_NAME}"
+#     - "${_TEST_CLUSTER_LOCATION}"
+#     - "${_REGISTRY}"
+#   id: e2e-feature-gates
+#   waitFor:
+#     - build-e2e
 
-#
-# Run the e2e tests without FeatureGates
-#
+# #
+# # Run the e2e tests without FeatureGates
+# #
 
-- name: 'e2e-runner'
-  args:
-    - "${_FEATURE_WITHOUT_GATE}"
-    - "${_CLOUD_PRODUCT}"
-    - "${_TEST_CLUSTER_NAME}"
-    - "${_TEST_CLUSTER_LOCATION}"
-    - "${_REGISTRY}"
-  id: e2e-stable
-  waitFor:
-    - e2e-feature-gates
+# - name: 'e2e-runner'
+#   args:
+#     - "${_FEATURE_WITHOUT_GATE}"
+#     - "${_CLOUD_PRODUCT}"
+#     - "${_TEST_CLUSTER_NAME}"
+#     - "${_TEST_CLUSTER_LOCATION}"
+#     - "${_REGISTRY}"
+#   id: e2e-stable
+#   waitFor:
+#     - e2e-feature-gates
 
-substitutions:
-  _REGISTRY: us-docker.pkg.dev/${PROJECT_ID}/ci
-tags: ['e2e-test']
-timeout: 7200s # 2h
-queueTtl: 21600s # 6h
+# substitutions:
+#   _REGISTRY: us-docker.pkg.dev/${PROJECT_ID}/ci
+# tags: ['e2e-test']
+# timeout: 7200s # 2h
+# queueTtl: 21600s # 6h
 
 
 
@@ -75,25 +75,27 @@ queueTtl: 21600s # 6h
 #     - "${_REGISTRY}"
 #   id: e2e-feature-gates-1
 
-# - name: bash
-#   env:
-#   - 'BAR=$_CLOUD_PRODUCT'
-#   - 'FOO=$_FEATURE_WITH_GATE'
-#   - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
-#   script: |
-#     #!/usr/bin/env bash
-#     echo $BAR
-#     if [ $BAR = generic ]
-#       then exit 1
-#     fi
+- name: bash
+  env:
+  - 'BAR=$_CLOUD_PRODUCT'
+  - 'FOO=$_FEATURE_WITH_GATE'
+  - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
+  - 'REGIS=$_REGISTRY'
+  script: |
+    #!/usr/bin/env bash
+    echo $BAR
+    echo $REGIS
+    if [ $BAR = generic ]
+      then exit 1
+    fi
 
-#     echo "Welcome $FOO"
-#     for i in 1 2 3 4
-#     do
-#       sleep 120
-#     done
-#     echo "Welcome $FOOFOO"
-#   id: e2e-$BAR
+    echo "Welcome $FOO"
+    for i in 1 2 3 4
+    do
+      sleep 120
+    done
+    echo "Welcome $FOOFOO"
+  id: e2e-$BAR
 
 options:
     substitution_option: 'ALLOW_LOOSE'
