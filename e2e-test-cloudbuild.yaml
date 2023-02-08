@@ -74,30 +74,51 @@ steps:
 #     - 'e2e-test-cluster'
 #     - "${_REGISTRY}"
 #   id: e2e-feature-gates-1
-
 - name: bash
-  env:
-  - 'BAR=$_CLOUD_PRODUCT'
-  - 'FOO=$_FEATURE_WITH_GATE'
-  - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
-  - 'REGIS=$_REGISTRY'
   script: |
     #!/usr/bin/env bash
-    echo $BAR
-    echo $REGIS
-    if [ $BAR = generic ]
-      then exit 1
-    fi
-
-    echo "Welcome $FOO"
+    
     for i in 1 2 3 4
     do
       sleep 1
     done
-    echo "Welcome $FOOFOO"
-  id: e2e-${PROJECT_ID}
+  id: first-step
 
-options:
-    substitution_option: 'ALLOW_LOOSE'
+- name: bash
+  script: |
+    #!/usr/bin/env bash
+  
+    for i in 1 2 3 4
+    do
+      sleep 1
+    done
+  id: second-step
+  waitFor:
+    - first-step
+
+# - name: bash
+#   env:
+#   - 'BAR=$_CLOUD_PRODUCT'
+#   - 'FOO=$_FEATURE_WITH_GATE'
+#   - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
+#   - 'REGIS=$_REGISTRY'
+#   script: |
+#     #!/usr/bin/env bash
+#     echo $BAR
+#     echo $REGIS
+#     if [ $BAR = generic ]
+#       then exit 1
+#     fi
+
+#     echo "Welcome $FOO"
+#     for i in 1 2 3 4
+#     do
+#       sleep 1
+#     done
+#     echo "Welcome $FOOFOO"
+#   id: e2e-${PROJECT_ID}
+
+# options:
+#     substitution_option: 'ALLOW_LOOSE'
 
 tags: ['e2e-test']
