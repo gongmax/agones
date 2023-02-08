@@ -113,7 +113,10 @@ steps:
     echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      sleep 1
+      if [ i -eq 3 ] && [ $BAR = generic ]
+        then exit 1
+      fi
+      sleep 20
     done
     echo "Welcome $FOOFOO"
   id: e2e-${PROJECT_ID}
