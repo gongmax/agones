@@ -31,7 +31,7 @@ steps:
 #
 
 - name: gcr.io/$PROJECT_ID/restore_cache
-  id: htmltest-restore-cache
+  id: gcr.io/$PROJECT_ID/restore_cache
   args:
     - '--bucket=gs://$_CACHE_BUCKET'
     - '--key=$_HTMLTEST_CACHE_KEY'

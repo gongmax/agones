@@ -92,7 +92,7 @@ steps:
     echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      sleep 120
+      sleep 1
     done
     echo "Welcome $FOOFOO"
   id: e2e-${PROJECT_ID}
