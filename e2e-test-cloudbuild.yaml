@@ -95,7 +95,7 @@ steps:
       sleep 120
     done
     echo "Welcome $FOOFOO"
-  id: e2e-$BAR
+  id: e2e-${PROJECT_ID}
 
 options:
     substitution_option: 'ALLOW_LOOSE'
