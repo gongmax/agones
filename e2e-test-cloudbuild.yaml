@@ -106,17 +106,15 @@ steps:
     #!/usr/bin/env bash
     echo $BAR
     echo $REGIS
-    if [ $BAR = generic ]
-      then exit 1
-    fi
 
     echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      if [ i -eq 3 ] && [ $BAR = generic ]
+      if [ $i -eq 3 ] && [ $BAR = generic ]
         then exit 1
       fi
       sleep 20
+      echo $i
     done
     echo "Welcome $FOOFOO"
   id: e2e-${PROJECT_ID}
