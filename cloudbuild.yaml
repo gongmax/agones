@@ -31,7 +31,7 @@ steps:
 #
 
 - name: gcr.io/$PROJECT_ID/restore_cache
-  id: 'gcr.io/$PROJECT_ID/restore_cache'
+  id: '${_REGISTRY}'
   args:
     - '--bucket=gs://$_CACHE_BUCKET'
     - '--key=$_HTMLTEST_CACHE_KEY'
