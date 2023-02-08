@@ -158,6 +158,7 @@ steps:
    - '-c'
    - |
       set -e
+      set -o pipefail
       pids=()
       cloudProducts=("generic" "gke-autopilot")
       for cloudProduct in ${cloudProducts[@]}
