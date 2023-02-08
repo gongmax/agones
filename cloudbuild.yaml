@@ -180,7 +180,7 @@ steps:
           pwd
           { gcloud builds submit --config=e2e-test-cloudbuild.yaml \
             --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY} \
-            |& sed "s/^/${cloudProduct}-${k8sVersion}: /" } &
+            |& sed "s/^/${cloudProduct}-${k8sVersion}: /"; } &
           pids+=($!)
         done
       done
