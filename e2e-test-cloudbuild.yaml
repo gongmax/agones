@@ -110,10 +110,10 @@ steps:
     echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      if [ $i -eq 3 ] && [ $BAR = generic ]
-        then sleep 10
+      if [ $BAR = generic ]
+        then sleep 20
       fi
-      sleep 10
+      sleep 5
       echo $i
     done
     if [ $BAR = generic ]
