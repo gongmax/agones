@@ -161,25 +161,28 @@ steps:
       set -o pipefail
       pids=()
       cloudProducts=("generic" "gke-autopilot")
+      k8sVersions=("1.23" "1.24" "1.25")
+      featureWithGate="CustomFasSyncInterval=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SafeToEvict=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
+
       for cloudProduct in ${cloudProducts[@]}
       do
-        if [ $cloudProduct = generic ]
-        then 
-          featureWithGate="CustomFasSyncInterval=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SafeToEvict=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
-          featureWithoutGate=""
-          testClusterLocation="us-west1-c"
-          testCluster="e2e-test-cluster"
-        else
-          featureWithGate="CustomFasSyncInterval=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&SafeToEvict=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
-          featureWithoutGate="SafeToEvict=true&SplitControllerAndExtensions=true"
-          testClusterLocation="us-west1"
-          testCluster="gke-autopilot-e2e-test-cluster-1-24"
-        fi
-        k8sVersions=("1.24")
         for k8sVersion in ${k8sVersions[@]}
         do
-          pwd
-          { gcloud builds submit --config=e2e-test-cloudbuild.yaml \
+          if [ $cloudProduct = gke-autopilot ] && [ $k8sVersion = 1.23 ]
+          then
+            continue
+          fi
+          if [ $cloudProduct = gke-autopilot ]
+          then
+            featureWithoutGate="SafeToEvict=true&SplitControllerAndExtensions=true"
+            testClusterLocation="us-west1"
+            testCluster="gke-autopilot-e2e-test-cluster-${k8sVersion//./-}"
+          else
+            featureWithoutGate=""
+            testClusterLocation="us-west1-c"
+            testCluster="gke-standard-e2e-test-cluster-${k8sVersion//./-}"
+          fi
+          { gcloud builds submit . --config=e2e-test-cloudbuild.yaml \
             --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY} \
             |& sed "s/^/${cloudProduct}-${k8sVersion}: /"; } &
           pids+=($!)

@@ -102,24 +102,32 @@ steps:
   - 'FOO=$_FEATURE_WITH_GATE'
   - 'FOOFOO=$_FEATURE_WITHOUT_GATE'
   - 'REGIS=$_REGISTRY'
+  - 'CLUSTER=$_TEST_CLUSTER_NAME'
+  - 'LOCATION=$_TEST_CLUSTER_LOCATION'
   script: |
     #!/usr/bin/env bash
-    echo $BAR
-    echo $REGIS
+    # echo $BAR
+    # echo $REGIS
 
-    echo "Welcome $FOO"
+    # echo "Welcome $FOO"
     for i in 1 2 3 4
     do
-      if [ $BAR = generic ]
-        then sleep 20
-      fi
+      # if [ $BAR = generic ]
+      #   then sleep 20
+      # fi
       sleep 5
       echo $i
     done
-    if [ $BAR = generic ]
-        then exit 1
-      fi
-    echo "Welcome $FOOFOO"
+    # if [ $BAR = generic ]
+    #     then exit 1
+    #   fi
+    
+    echo "$BAR"
+    echo "$FOOFOO"
+    echo "$FOO"
+    echo "$REGIS"
+    echo "$CLUSTER"
+    echo "$LOCATION"
   id: e2e-${PROJECT_ID}
 
 options:
