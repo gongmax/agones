@@ -166,7 +166,7 @@ steps:
 
       for cloudProduct in ${cloudProducts[@]}
       do
-        for index in ${!k8sVersions[@]}
+        for i in ${!k8sVersions[@]}
         do
           if [ $cloudProduct = gke-autopilot ] && [ ${k8sVersions[$i]} = 1.23 ]
           then
