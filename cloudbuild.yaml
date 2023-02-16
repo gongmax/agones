@@ -173,9 +173,11 @@ steps:
 
       for cloudProduct in ${cloudProducts[@]}
       do
-        for i in ${!versionsAndRegions[@]}
-        j=${versionsAndRegions[$i]}
-        echo "$i.$j"
+        for i in "${!versionsAndRegions[@]}"
+        do
+          j=${versionsAndRegions[$i]}
+          echo "$i.$j"
+        done
         
         # do
         #   if [ $cloudProduct = gke-autopilot ] && [ ${k8sVersions[$i]} = 1.23 ]
