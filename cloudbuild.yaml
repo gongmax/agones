@@ -180,7 +180,7 @@ steps:
           then
             featureWithGate="CustomFasSyncInterval=false&SafeToEvict=true&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
             featureWithoutGate="SplitControllerAndExtensions=true"
-            testClusterLocation="${region}"
+            testClusterLocation="$region"
             testCluster="gke-autopilot-e2e-test-cluster-${version//./-}"
           else
             featureWithGate="CustomFasSyncInterval=false&SafeToEvict=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
