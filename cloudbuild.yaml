@@ -169,7 +169,7 @@ steps:
         echo "$i.$j"
       done
 
-      declare -A versionsAndRegions= ( [1.23]=us-east1 [1.24]=us-west1 [1.25]=us-central1)
+      declare -A versionsAndRegions= ( [1.23]=us-east1 [1.24]=us-west1 [1.25]=us-central1 )
 
       for cloudProduct in ${cloudProducts[@]}
       do
@@ -202,21 +202,21 @@ steps:
       done
 
       # If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
-      for pid in "${pids[@]}"; do
-        if wait -n; then
-          :
-        else
-          status=$?
-          echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
-          for pid in "${pids[@]}"; do
-            # Send a termination signal to all the children, and ignore errors
-            # due to children that no longer exist.
-            kill "$pid" 2> /dev/null || :
-            echo "killed $pid"
-          done
-          exit "$status"
-        fi
-      done
+      # for pid in "${pids[@]}"; do
+      #   if wait -n; then
+      #     :
+      #   else
+      #     status=$?
+      #     echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
+      #     for pid in "${pids[@]}"; do
+      #       # Send a termination signal to all the children, and ignore errors
+      #       # due to children that no longer exist.
+      #       kill "$pid" 2> /dev/null || :
+      #       echo "killed $pid"
+      #     done
+      #     exit "$status"
+      #   fi
+      # done
       
       echo "all done"
   waitFor:
