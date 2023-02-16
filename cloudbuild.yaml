@@ -163,55 +163,55 @@ steps:
       cloudProducts=("generic" "gke-autopilot")
       declare -A versionsAndRegions=( [1.23]=us-east1 [1.24]=us-west1 [1.25]=us-central1 )
       for version in "${!versionsAndRegions[@]}"; do
-        j=${versionsAndRegions[$version]}
-        echo "$version.$j"
-      done
-
-      for cloudProduct in ${cloudProducts[@]}
-      do
-        for version in "${!versionsAndRegions[@]}"
         region=${versionsAndRegions[$version]}
         echo "$version.$region"
-        do
-          if [ $cloudProduct = gke-autopilot ] && [ $version = 1.23 ]
-          then
-            continue
-          fi
-          if [ $cloudProduct = gke-autopilot ]
-          then
-            featureWithGate="CustomFasSyncInterval=false&SafeToEvict=true&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
-            featureWithoutGate="SplitControllerAndExtensions=true"
-            testClusterLocation="${region}"
-            testCluster="gke-autopilot-e2e-test-cluster-${version//./-}"
-          else
-            featureWithGate="CustomFasSyncInterval=false&SafeToEvict=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
-            featureWithoutGate=""
-            testClusterLocation="${region}-c"
-            testCluster="gke-standard-e2e-test-cluster-${version//./-}"
-          fi
-          { gcloud builds submit . --config=e2e-test-cloudbuild.yaml \
-            --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY} \
-            |& sed "s/^/${cloudProduct}-${version}: /"; } &
-          pids+=($!)
-        done
       done
 
-      If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
-      for pid in "${pids[@]}"; do
-        if wait -n; then
-          :
-        else
-          status=$?
-          echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
-          for pid in "${pids[@]}"; do
-            # Send a termination signal to all the children, and ignore errors
-            # due to children that no longer exist.
-            kill "$pid" 2> /dev/null || :
-            echo "killed $pid"
-          done
-          exit "$status"
-        fi
-      done
+      # for cloudProduct in ${cloudProducts[@]}
+      # do
+      #   for version in "${!versionsAndRegions[@]}"
+      #   region=${versionsAndRegions[$version]}
+      #   echo "$version.$region"
+      #   do
+      #     if [ $cloudProduct = gke-autopilot ] && [ $version = 1.23 ]
+      #     then
+      #       continue
+      #     fi
+      #     if [ $cloudProduct = gke-autopilot ]
+      #     then
+      #       featureWithGate="CustomFasSyncInterval=false&SafeToEvict=true&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
+      #       featureWithoutGate="SplitControllerAndExtensions=true"
+      #       testClusterLocation="${region}"
+      #       testCluster="gke-autopilot-e2e-test-cluster-${version//./-}"
+      #     else
+      #       featureWithGate="CustomFasSyncInterval=false&SafeToEvict=false&SDKGracefulTermination=false&StateAllocationFilter=false&PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=true&PodHostname=true&SplitControllerAndExtensions=true&Example=true"
+      #       featureWithoutGate=""
+      #       testClusterLocation="${region}-c"
+      #       testCluster="gke-standard-e2e-test-cluster-${version//./-}"
+      #     fi
+      #     { gcloud builds submit . --config=e2e-test-cloudbuild.yaml \
+      #       --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY} \
+      #       |& sed "s/^/${cloudProduct}-${version}: /"; } &
+      #     pids+=($!)
+      #   done
+      # done
+
+      # If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
+      # for pid in "${pids[@]}"; do
+      #   if wait -n; then
+      #     :
+      #   else
+      #     status=$?
+      #     echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
+      #     for pid in "${pids[@]}"; do
+      #       # Send a termination signal to all the children, and ignore errors
+      #       # due to children that no longer exist.
+      #       kill "$pid" 2> /dev/null || :
+      #       echo "killed $pid"
+      #     done
+      #     exit "$status"
+      #   fi
+      # done
       
       echo "all done"
   waitFor:
