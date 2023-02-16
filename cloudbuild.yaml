@@ -166,7 +166,7 @@ steps:
       declare -A pairs=( [4_1]=4_2 [5_1]=5_2 [6_1]=6_2 [7_1]=7_2 [8_1]=8_2 )
       for i in "${!pairs[@]}"; do
         j=${pairs[$i]}
-        paste "$i.txt" "$j.txt" >"${i}.${j}.txt"
+        echo "$i.$j"
       done
 
       # for cloudProduct in ${cloudProducts[@]}
