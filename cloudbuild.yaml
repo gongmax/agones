@@ -170,7 +170,7 @@ steps:
       for cloudProduct in ${cloudProducts[@]}
       do
         for i in "${!versionsAndRegions[@]}"
-        version=$i
+        version=${i}
         region=${versionsAndRegions[$i]}
         do
           if [ $cloudProduct = gke-autopilot ] && [ $version = 1.23 ]
