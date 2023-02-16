@@ -195,7 +195,7 @@ steps:
         done
       done
 
-      If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
+      # If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
       for pid in "${pids[@]}"; do
         if wait -n; then
           :
