@@ -162,9 +162,9 @@ steps:
       pids=()
       cloudProducts=("generic" "gke-autopilot")
       declare -A versionsAndRegions=( [1.23]=us-east1 [1.24]=us-west1 [1.25]=us-central1 )
-      for a in "${!versionsAndRegions[@]}"; do
-        j=${versionsAndRegions[$a]}
-        echo "$a.$j"
+      for version in "${!versionsAndRegions[@]}"; do
+        j=${versionsAndRegions[$version]}
+        echo "$version.$j"
       done
 
       for cloudProduct in ${cloudProducts[@]}
