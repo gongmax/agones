@@ -227,7 +227,7 @@ steps:
   args:
     - -c
     - |
-      sleep 50s
+      sleep 55s
       echo JOB DONE!
 
 # - name: 'gcr.io/cloud-builders/gcloud'
