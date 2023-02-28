@@ -2,23 +2,12 @@
 # Provides automation for cancelling Cloud Builds
 # Use as a first step to cancel previous builds currently in progress or queued for the same branch name and trigger id.
 # Similar to: https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/cancelot
-
-# Usage stand-alone (gcloud CLI must be installed and authorised):
-#    ./cancelot.sh --current_build_id $BUILD_ID --branch_name $BRANCH_NAME [--same_trigger_only] [--project "gcloud-project-id"] [--region ""]
-#
-# Could be configured with arguments or via ENV (or mixed).
-# Arguments will take priority.
 #
 # Usage within Cloud Build step:
 #    steps:
-#    - name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
-#      entrypoint: bash
-#      args:
-#        - cancelot.sh --same_trigger_only
-#      env:
-#        - 'CURRENT_BUILD_ID=$BUILD_ID'
-#        - 'PROJECT_ID=$PROJECT_ID'
-#        - 'REGION=$LOCATION'
+#    - name: 'gcr.io/cloud-builders/gcloud-slim:latest'
+#      entrypoint: 'bash'
+#      args: ['./cancelot.sh', '--current_build_id', '$BUILD_ID']
 
 # Exit script when command fails
 set -o errexit
