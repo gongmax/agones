@@ -115,7 +115,7 @@ steps:
       # if [ $BAR = generic ]
       #   then sleep 20
       # fi
-      sleep 5
+      sleep 20
       echo $i
     done
     # if [ $BAR = generic ]

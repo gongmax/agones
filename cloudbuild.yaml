@@ -21,6 +21,12 @@ steps:
 #
 # Print Docker version
 #
+- id: cancelot
+  name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+  entrypoint: bash
+  args:
+    - cancelot.sh 
+    -  --current_build_id "${BUILD_ID}"
 
 - name: gcr.io/cloud-builders/docker
   id: docker-version
@@ -215,6 +221,16 @@ steps:
       echo "all done"
   waitFor:
     - cancel-orphan-e2e-tests
+
+- id: do-some-work
+  waitFor: ['submit-e2e-test-cloud-build']
+  name: alpine
+  entrypoint: /bin/sh
+  args:
+    - -c
+    - |
+      sleep 60s
+      echo JOB DONE!
 
 # - name: 'gcr.io/cloud-builders/gcloud'
 #   id: test-$PROJECT_ID
