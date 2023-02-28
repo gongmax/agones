@@ -46,8 +46,6 @@ USAGE
 
 # Process arguments
 while [[ $# -gt 0 ]]; do
-    echo "!!!"
-    echo "$1"
     case "$1" in
     --current_build_id)
         CURRENT_BUILD_ID="$2"
