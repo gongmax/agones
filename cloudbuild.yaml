@@ -21,12 +21,12 @@ steps:
 #
 # Print Docker version
 #
-# - id: cancelot
-#   name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
-#   entrypoint: bash
-#   args:
-#     - cancelot.sh 
-#     -  --current_build_id "${BUILD_ID}"
+- id: cancelot
+  name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+  entrypoint: bash
+  args:
+    - cancelot.sh 
+    -  --current_build_id "${BUILD_ID}"
 
 - name: gcr.io/cloud-builders/docker
   id: docker-version
