@@ -109,7 +109,7 @@ steps:
     # echo $BAR
     # echo $REGIS
 
-    # echo "Welcome HAHAHAHAHHAAH $FOO"
+    echo "Welcome HAHAHAHAHHAAH $FOO"
     for i in 1 2 3 4
     do
       # if [ $BAR = generic ]
