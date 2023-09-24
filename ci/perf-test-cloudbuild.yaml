@@ -77,7 +77,7 @@ steps:
         done
         echo "all done"
     waitFor:
-      - make-docker
+      - pull-build-image
 
 substitutions:
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
