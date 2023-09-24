@@ -84,7 +84,6 @@ substitutions:
 tags: [ci, 'commit-${COMMIT_SHA}']
 timeout: 18000s  # 5h: 3h (e2e-wait-to-become-leader) + 1.5h (e2e timeout) + 0.5h (everything else)
 queueTtl: 259200s  # 72h
-logsBucket: gs://agones-build-logs
 options:
   machineType: E2_HIGHCPU_32
   dynamic_substitutions: true
