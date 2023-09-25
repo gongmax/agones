@@ -102,6 +102,8 @@ steps:
   #     - pull-build-image
 
 substitutions:
+  _TEST_CLUSTER_NAME: standard-perf-test-cluster-1-27
+  _TEST_CLUSTER_LOCATION: us-east1
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
 tags: [ci, 'commit-${COMMIT_SHA}']
 timeout: 18000s  # 5h: 3h (e2e-wait-to-become-leader) + 1.5h (e2e timeout) + 0.5h (everything else)
