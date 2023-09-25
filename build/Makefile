@@ -418,8 +418,7 @@ install-to-cluster:
 	# cd /go/src/agones.dev/agones/build
 	# less /root/.kube/config
 	# kubectl -v
-	docker run --network=cloudbuild
-	docker run $(build_tag) gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
+	docker run $(build_tag) --network=cloudbuild gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
 install-to-clusters:
 	install
 # Installs the current development version of Agones into the Kubernetes cluster
