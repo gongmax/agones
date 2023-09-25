@@ -35,6 +35,9 @@ steps:
         set -o pipefail
         pids=()
         gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
+        mkdir -p /go/src/agones.dev/ /root/.kube/
+        ln -s /workspace /go/src/agones.dev/agones
+        cd /go/src/agones.dev/agones/build
         make test-install-yaml
         echo "all done"
     waitFor:
