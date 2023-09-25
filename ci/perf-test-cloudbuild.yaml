@@ -24,61 +24,69 @@ steps:
     waitFor:
       - build-make-docker
 
-  # kick off the child e2e test cloud builds in parallel, fail this build if any of the child build fails
-  - name: gcr.io/cloud-builders/gcloud
-    id: submit-e2e-test-cloud-build
-    entrypoint: bash
-    args:
-      - -c
-      - |
-        set -e
-        set -o pipefail
-        pids=()
-        gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
-        cloudProducts=("generic")
-        declare -A versionsAndRegions=( [1.27]=us-east1  )
-        for cloudProduct in ${cloudProducts[@]}
-        do
-          for version in "${!versionsAndRegions[@]}"
-          do
-            region=${versionsAndRegions[$version]}
-            if [ $cloudProduct = generic ]
-            then
-              featureWithGate="PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=false&PodHostname=false&SplitControllerAndExtensions=false&FleetAllocationOverflow=true&CountsAndLists=true&Example=true"
-              testCluster="standard-e2e-test-cluster-${version//./-}"
-            else
-              featureWithGate="PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=false&PodHostname=false&SplitControllerAndExtensions=true&FleetAllocationOverflow=true&CountsAndLists=true&Example=true"
-              testCluster="standard-e2e-test-cluster-${version//./-}"
-            fi
-            featureWithoutGate=""
-            testClusterLocation="${region}"
-            { stdbuf -oL -eL gcloud builds submit . --suppress-logs --config=./ci/e2e-test-cloudbuild.yaml \
-              --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY},_PARENT_COMMIT_SHA=${COMMIT_SHA},_PARENT_BUILD_ID=${BUILD_ID} \
-              |& stdbuf -i0 -oL -eL grep -v " tarball " \
-              |& stdbuf -i0 -oL -eL sed "s/^/${cloudProduct}-${version}: /"; } &
-            pids+=($!)
-          done
-        done
-
-        # If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
-        for pid in "${pids[@]}"; do
-          if wait -n; then
-            :
-          else
-            status=$?
-            echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
-            for pid in "${pids[@]}"; do
-              # Send a termination signal to all the children, and ignore errors
-              # due to children that no longer exist.
-              kill "$pid" 2> /dev/null || :
-              echo "killed $pid"
-            done
-            exit "$status"
-          fi
-        done
-        echo "all done"
+  - name: make-docker
+    id: pull-build-image
+    dir: build
+    env: ['REGISTRY=${_REGISTRY}']
+    args: [install]
     waitFor:
       - pull-build-image
+
+  # # kick off the child e2e test cloud builds in parallel, fail this build if any of the child build fails
+  # - name: gcr.io/cloud-builders/gcloud
+  #   id: submit-e2e-test-cloud-build
+  #   entrypoint: bash
+  #   args:
+  #     - -c
+  #     - |
+  #       set -e
+  #       set -o pipefail
+  #       pids=()
+  #       gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
+  #       cloudProducts=("generic")
+  #       declare -A versionsAndRegions=( [1.27]=us-east1  )
+  #       for cloudProduct in ${cloudProducts[@]}
+  #       do
+  #         for version in "${!versionsAndRegions[@]}"
+  #         do
+  #           region=${versionsAndRegions[$version]}
+  #           if [ $cloudProduct = generic ]
+  #           then
+  #             featureWithGate="PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=false&PodHostname=false&SplitControllerAndExtensions=false&FleetAllocationOverflow=true&CountsAndLists=true&Example=true"
+  #             testCluster="standard-e2e-test-cluster-${version//./-}"
+  #           else
+  #             featureWithGate="PlayerAllocationFilter=true&PlayerTracking=true&ResetMetricsOnDelete=false&PodHostname=false&SplitControllerAndExtensions=true&FleetAllocationOverflow=true&CountsAndLists=true&Example=true"
+  #             testCluster="standard-e2e-test-cluster-${version//./-}"
+  #           fi
+  #           featureWithoutGate=""
+  #           testClusterLocation="${region}"
+  #           { stdbuf -oL -eL gcloud builds submit . --suppress-logs --config=./ci/e2e-test-cloudbuild.yaml \
+  #             --substitutions _FEATURE_WITH_GATE=$featureWithGate,_FEATURE_WITHOUT_GATE=$featureWithoutGate,_CLOUD_PRODUCT=$cloudProduct,_TEST_CLUSTER_NAME=$testCluster,_TEST_CLUSTER_LOCATION=$testClusterLocation,_REGISTRY=${_REGISTRY},_PARENT_COMMIT_SHA=${COMMIT_SHA},_PARENT_BUILD_ID=${BUILD_ID} \
+  #             |& stdbuf -i0 -oL -eL grep -v " tarball " \
+  #             |& stdbuf -i0 -oL -eL sed "s/^/${cloudProduct}-${version}: /"; } &
+  #           pids+=($!)
+  #         done
+  #       done
+
+  #       # If any of the subprocess exit with nonzero code, exit the main process and kill all subprocesses
+  #       for pid in "${pids[@]}"; do
+  #         if wait -n; then
+  #           :
+  #         else
+  #           status=$?
+  #           echo "One of the e2e test child cloud build exited with nonzero status $status. Aborting."
+  #           for pid in "${pids[@]}"; do
+  #             # Send a termination signal to all the children, and ignore errors
+  #             # due to children that no longer exist.
+  #             kill "$pid" 2> /dev/null || :
+  #             echo "killed $pid"
+  #           done
+  #           exit "$status"
+  #         fi
+  #       done
+  #       echo "all done"
+  #   waitFor:
+  #     - pull-build-image
 
 substitutions:
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
