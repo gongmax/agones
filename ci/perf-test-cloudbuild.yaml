@@ -24,25 +24,26 @@ steps:
     waitFor:
       - build-make-docker
 
-  - name: gcr.io/cloud-builders/gcloud
-    id: get-auth
-    entrypoint: bash
-    args:
-      - -c
-      - |
-        set -e
-        set -o pipefail
-        gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1
-    waitFor:
-      - pull-build-image
+  #
+  # build the e2e test runner
+  #
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, Dockerfile, -t, perf-runner, .]
+    dir: build/perf-test-image
+    id: build-perf
+    waitFor: ['-']
 
-  - name: make-docker
-    id: install
-    dir: build
-    env: ['REGISTRY=${_REGISTRY}']
-    args: [install-to-cluster]
+  #
+  # Run the e2e tests with FeatureGates inverted compared to Stable
+  #
+  # Keep in sync with (the inverse of) pkg/util/runtime/features.go:featureDefaults
+  - name: perf-runner
+    args:
+      - ${_TEST_CLUSTER_NAME}
+      - ${_TEST_CLUSTER_LOCATION}
+    id: perf-test
     waitFor:
-      - get-auth
+      - build-perf
 
   # # kick off the child e2e test cloud builds in parallel, fail this build if any of the child build fails
   # - name: gcr.io/cloud-builders/gcloud
