@@ -38,7 +38,7 @@ steps:
         mkdir -p /go/src/agones.dev/ /root/.kube/
         ln -s /workspace /go/src/agones.dev/agones
         cd /go/src/agones.dev/agones/build
-        make test-install-yaml
+        make install REGISTRY=${_REGISTRY}
         echo "all done"
     waitFor:
       - pull-build-image
