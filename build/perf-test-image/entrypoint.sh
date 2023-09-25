@@ -27,3 +27,6 @@ gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
         --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-dev
 
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
+
+cd /go/src/agones.dev/agones/test/load/allocation
+./runAllocation.sh 1 1
