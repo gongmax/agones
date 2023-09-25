@@ -19,9 +19,6 @@ RUN curl -L  ${HELM_URL} > /tmp/helm.tar.gz \
     && chmod go+rx /usr/local/bin/helm \
     && rm /tmp/helm.tar.gz && rm -rf /tmp/linux-amd64
 
-# install gotestsum test runner
-RUN go install gotest.tools/gotestsum@latest
-
 COPY *.sh /root/
 RUN chmod +x /root/*.sh
 
