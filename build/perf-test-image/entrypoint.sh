@@ -29,4 +29,5 @@ gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
 cd /go/src/agones.dev/agones/test/load/allocation
-kubectl get pods
+kubectl apply -f fleet.yaml
+kubectl apply -f autoscaler.yaml
