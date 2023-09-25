@@ -35,7 +35,7 @@ steps:
         set -o pipefail
         pids=()
         gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
-        make test-go
+        make test-install-yaml
         echo "all done"
     waitFor:
       - pull-build-image
