@@ -36,3 +36,9 @@ ACTUAL=$(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}')
 
 echo "Desired: $DESIRED"
 echo "Actual: $ACTUAL"
+
+if [ "$DESIRED" == "$ACTUAL" ]; then
+    echo "Both Strings are Equal."
+else
+    echo "Both Strings are not Equal."
+fi
