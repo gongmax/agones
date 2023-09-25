@@ -32,13 +32,12 @@ cd /go/src/agones.dev/agones/test/load/allocation
 kubectl apply -f fleet.yaml
 kubectl apply -f autoscaler.yaml
 DESIRED=$(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}')
-# ACTUAL=$(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}')
-ACTUAL=2000
+ACTUAL=$(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}')
 
 echo "Desired: $DESIRED"
 echo "Actual: $ACTUAL"
 
-if [ "$DESIRED" == "$ACTUAL" ]; then
+if [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}') == $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]; then
     echo "Both Strings are Equal."
 else
     echo "Both Strings are not Equal."
