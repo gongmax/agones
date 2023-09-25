@@ -31,7 +31,7 @@ then
         gcloud auth login
 fi
 gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
-        --zone=${TEST_CLUSTER_LOCATION} --project=agones-images
+        --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-de
 
 echo /root/e2e.sh "${FEATURES}" "${CLOUD_PRODUCT}" "${REGISTRY}"
 /root/e2e.sh "${FEATURES}" "${CLOUD_PRODUCT}" "${REGISTRY}"
