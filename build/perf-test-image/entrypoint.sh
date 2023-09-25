@@ -19,8 +19,10 @@ TEST_CLUSTER_LOCATION=$2
 REGISTRY=$3
 
 export SHELL="/bin/bash"
+mkdir -p /go/src/agones.dev/
 ln -s /workspace /go/src/agones.dev/agones
 cd /go/src/agones.dev/agones/build
+
 gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
         --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-dev
 
