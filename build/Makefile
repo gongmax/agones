@@ -411,7 +411,7 @@ test-install-yaml:
 push: push-controller-image push-extensions-image push-agones-sdk-image push-ping-image push-allocator-image
 
 install-to-cluster:
-	docker run gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
+	gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
 install-to-clusters:
 	install
 # Installs the current development version of Agones into the Kubernetes cluster
