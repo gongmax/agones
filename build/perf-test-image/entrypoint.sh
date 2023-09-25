@@ -19,15 +19,15 @@ TEST_CLUSTER_LOCATION=$2
 REGISTRY=$3
 
 export SHELL="/bin/bash"
-export KUBECONFIG="/root/.kube/config"
-mkdir -p /go/src/agones.dev/ /root/.kube/
-ln -s /workspace /go/src/agones.dev/agones
-cd /go/src/agones.dev/agones/build
-if [ "$1" = 'local' ]
-then
-        gcloud auth login
-fi
+# export KUBECONFIG="/root/.kube/config"
+# mkdir -p /go/src/agones.dev/ /root/.kube/
+# ln -s /workspace /go/src/agones.dev/agones
+# cd /go/src/agones.dev/agones/build
+# if [ "$1" = 'local' ]
+# then
+#         gcloud auth login
+# fi
 gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
         --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-dev
 
-make install REGISTRY='"'$REGISTRY'"' 
+DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
