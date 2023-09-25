@@ -4,6 +4,16 @@ RUN apt-get update && \
     apt-get install -y wget make && \
     apt-get clean
 
+# install go
+WORKDIR /usr/local
+ENV GO_VERSION=1.20.4
+ENV GOPATH /go
+ENV GO111MODULE=on
+RUN wget -q https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
+    tar -xzf go${GO_VERSION}.linux-amd64.tar.gz && rm go${GO_VERSION}.linux-amd64.tar.gz && mkdir ${GOPATH}
+
+ENV PATH /usr/local/go/bin:/go/bin:$PATH
+
 # install kubectl without gcloud as we want the last version
 ENV KUBECTL_VER 1.26.6
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VER}/bin/linux/amd64/kubectl && \
@@ -19,7 +29,12 @@ RUN curl -L  ${HELM_URL} > /tmp/helm.tar.gz \
     && chmod go+rx /usr/local/bin/helm \
     && rm /tmp/helm.tar.gz && rm -rf /tmp/linux-amd64
 
+# make sure we keep the path to go
+RUN echo "export PATH=/usr/local/go/bin:/go/bin/:\$PATH" >> /root/.bashrc
+# scripts
 COPY *.sh /root/
 RUN chmod +x /root/*.sh
+
+WORKDIR /go
 
 ENTRYPOINT [ "/root/entrypoint.sh" ]
