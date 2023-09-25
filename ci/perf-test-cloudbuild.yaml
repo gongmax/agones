@@ -102,7 +102,7 @@ steps:
   #     - pull-build-image
 
 substitutions:
-  _TEST_CLUSTER_NAME: standard-perf-test-cluster-1-27
+  _TEST_CLUSTER_NAME: standard-e2e-test-cluster-1-27
   _TEST_CLUSTER_LOCATION: us-east1
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
 tags: [ci, 'commit-${COMMIT_SHA}']
