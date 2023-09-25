@@ -40,7 +40,7 @@ steps:
     id: install
     dir: build
     env: ['REGISTRY=${_REGISTRY}']
-    args: [install]
+    args: [install-to-cluster]
     waitFor:
       - get-auth
 
