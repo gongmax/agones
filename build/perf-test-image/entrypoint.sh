@@ -39,7 +39,8 @@ echo "Actual: $ACTUAL"
 
 while [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
 do
-    echo "Both Strings are not Equal."
-    sleep 10
+    sleep 1
 done
-echo "Both Strings are Equal."
+
+./runScenario.sh variable2.txt
+echo "Finish testing."
