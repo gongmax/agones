@@ -25,7 +25,7 @@ steps:
       - build-make-docker
 
   - name: make-docker
-    id: pull-build-image
+    id: install
     dir: build
     env: ['REGISTRY=${_REGISTRY}']
     args: [install]
