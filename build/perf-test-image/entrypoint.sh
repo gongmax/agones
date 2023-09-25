@@ -30,4 +30,4 @@ fi
 gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
         --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-dev
 
-DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
+make install REGISTRY='"'$REGISTRY'"' 
