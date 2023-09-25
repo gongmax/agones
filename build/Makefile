@@ -411,6 +411,7 @@ test-install-yaml:
 push: push-controller-image push-extensions-image push-agones-sdk-image push-ping-image push-allocator-image
 
 install-to-cluster:
+	export KUBECONFIG="/root/.kube/config"
 	docker run $(build_tag) gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
 install-to-clusters:
 	install
