@@ -416,6 +416,7 @@ install-to-cluster:
 	mkdir -p /go/src/agones.dev/ /root/.kube/
 	ln -s /workspace /go/src/agones.dev/agones
 	cd /go/src/agones.dev/agones/build
+	less /root/.kube/config
 	docker run $(build_tag) gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
 install-to-clusters:
 	install
