@@ -411,13 +411,14 @@ test-install-yaml:
 push: push-controller-image push-extensions-image push-agones-sdk-image push-ping-image push-allocator-image
 
 install-to-cluster:
-	export SHELL="/bin/bash"
-	export KUBECONFIG="/root/.kube/config"
-	mkdir -p /go/src/agones.dev/ /root/.kube/
-	ln -s /workspace /go/src/agones.dev/agones
-	cd /go/src/agones.dev/agones/build
-	less /root/.kube/config
-	kubectl -v
+	# export SHELL="/bin/bash"
+	# export KUBECONFIG="/root/.kube/config"
+	# mkdir -p /go/src/agones.dev/ /root/.kube/
+	# ln -s /workspace /go/src/agones.dev/agones
+	# cd /go/src/agones.dev/agones/build
+	# less /root/.kube/config
+	# kubectl -v
+	docker run --network=cloudbuild
 	docker run $(build_tag) gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --region us-east1
 install-to-clusters:
 	install
