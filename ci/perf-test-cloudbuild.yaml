@@ -41,6 +41,7 @@ steps:
     args:
       - ${_TEST_CLUSTER_NAME}
       - ${_TEST_CLUSTER_LOCATION}
+      - ${_REGISTRY}
     id: perf-test
     waitFor:
       - build-perf
