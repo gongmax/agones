@@ -42,5 +42,6 @@ do
     sleep 1
 done
 
+ls
 ./runScenario.sh variable2.txt
 echo "Finish testing."
