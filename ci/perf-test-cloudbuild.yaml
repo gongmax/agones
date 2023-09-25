@@ -24,13 +24,25 @@ steps:
     waitFor:
       - build-make-docker
 
+  - name: gcr.io/cloud-builders/gcloud
+    id: get-auth
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        set -o pipefail
+        gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
+    waitFor:
+      - pull-build-image
+
   - name: make-docker
     id: install
     dir: build
     env: ['REGISTRY=${_REGISTRY}']
     args: [install]
     waitFor:
-      - pull-build-image
+      - get-auth
 
   # # kick off the child e2e test cloud builds in parallel, fail this build if any of the child build fails
   # - name: gcr.io/cloud-builders/gcloud
