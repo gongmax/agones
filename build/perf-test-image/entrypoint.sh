@@ -29,4 +29,4 @@ gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
 cd /go/src/agones.dev/agones/test/load/allocation
-./runAllocation.sh 1 1
+kubectl get pods
