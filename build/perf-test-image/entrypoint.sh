@@ -37,7 +37,7 @@ ACTUAL=$(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}')
 echo "Desired: $DESIRED"
 echo "Actual: $ACTUAL"
 
-if [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}') == $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]; then
+if [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.scheduling}') == $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]; then
     echo "Both Strings are Equal."
 else
     echo "Both Strings are not Equal."
