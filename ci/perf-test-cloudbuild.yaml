@@ -33,7 +33,6 @@ steps:
         set -e
         set -o pipefail
         gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 --zone=us-east1 --project=gongmax-gke-dev
-        docker -v
     waitFor:
       - pull-build-image
 
