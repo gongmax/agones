@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018 Google LLC All Rights Reserved.
+# Copyright 2023 Google LLC All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ set -e
 TEST_CLUSTER_NAME=$1
 TEST_CLUSTER_LOCATION=$2
 REGISTRY=$3
+PROJECT=$4
 
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
@@ -24,7 +25,7 @@ ln -s /workspace /go/src/agones.dev/agones
 cd /go/src/agones.dev/agones/build
 
 gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
-        --zone=${TEST_CLUSTER_LOCATION} --project=gongmax-gke-dev
+        --zone=${TEST_CLUSTER_LOCATION} --project=${PROJECT}
 
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 

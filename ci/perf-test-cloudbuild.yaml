@@ -33,6 +33,7 @@ steps:
       - ${_TEST_CLUSTER_NAME}
       - ${_TEST_CLUSTER_LOCATION}
       - ${_REGISTRY}
+      - $PROJECT_ID
     id: perf-test
     waitFor:
       - build-perf
