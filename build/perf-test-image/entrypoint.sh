@@ -32,17 +32,11 @@ DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"'
 cd /go/src/agones.dev/agones/test/load/allocation
 kubectl apply -f fleet.yaml
 kubectl apply -f autoscaler.yaml
-DESIRED=$(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}')
-ACTUAL=$(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}')
-
-echo "Desired: $DESIRED"
-echo "Actual: $ACTUAL"
 
 while [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
 do
     sleep 1
 done
 
-ls
 ./runScenario.sh variable2.txt
 echo "Finish testing."

@@ -83,6 +83,7 @@ func main() {
 	scenarios := readScenarios(*scenariosFile)
 	var totalAllocCnt uint64
 	var totalFailureCnt uint64
+	var totalDuration float64
 
 	totalFailureDtls := allocErrorCodeCntMap()
 	for i, sc := range *scenarios {
@@ -131,13 +132,13 @@ func main() {
 		}
 		totalAllocCnt += scnAllocCnt
 		totalFailureCnt += scnFailureCnt
+		totalDuration += sc.duration.Seconds()
 		for k, v := range scnErrDtls {
 			if k != noerror {
 				logger.Printf("Count: %v\t\tError: %v", v, k)
 			}
 		}
-		logger.Printf("\nScenario Failure Count: %v, Allocation Count: %v", scnFailureCnt, scnAllocCnt)
-		logger.Printf("\nTotal Failure Count: %v, Total Allocation Count: %v", totalFailureCnt, totalAllocCnt)
+		logger.Printf("\n\n%v\nnScenario Failure Count: %v, Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), scnFailureCnt, scnAllocCnt, (float64) (scnFailureCnt) / (float64) (scnAllocCnt), (float64) (scnAllocCnt - scnFailureCnt) / sc.duration.Seconds())		logger.Printf("\nTotal Failure Count: %v, Total Allocation Count: %v", totalFailureCnt, totalAllocCnt)
 	}
 
 	logger.Print("\nFinal Error Totals\n")
@@ -146,7 +147,7 @@ func main() {
 			logger.Printf("Count: %v\t\tError: %v", v, k)
 		}
 	}
-	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v", time.Now(), totalFailureCnt, totalAllocCnt)
+	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), totalFailureCnt, totalAllocCnt, (float64) (totalFailureCnt) / (float64) (totalAllocCnt), (float64) (totalAllocCnt - totalFailureCnt) / totalDuration)
 }
 
 func dialOptions(certFile, keyFile, cacertFile string) (grpc.DialOption, error) {
