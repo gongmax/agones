@@ -147,10 +147,6 @@ func main() {
 			logger.Printf("Count: %v\t\tError: %v", v, k)
 		}
 	}
-
-
-
-	
 	
 	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), totalFailureCnt, totalAllocCnt, (float64) (totalFailureCnt) / (float64) (totalAllocCnt), (float64) (totalAllocCnt - totalFailureCnt) / totalDuration)
 }
