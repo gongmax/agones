@@ -138,7 +138,7 @@ func main() {
 				logger.Printf("Count: %v\t\tError: %v", v, k)
 			}
 		}
-		logger.Printf("\n\n%v\nnScenario Failure Count: %v, Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), scnFailureCnt, scnAllocCnt, (float64) (scnFailureCnt) / (float64) (scnAllocCnt), (float64) (scnAllocCnt - scnFailureCnt) / sc.duration.Seconds())
+		logger.Printf("\n\n%v\nScenario Failure Count: %v, Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), scnFailureCnt, scnAllocCnt, (float64) (scnFailureCnt) / (float64) (scnAllocCnt), (float64) (scnAllocCnt - scnFailureCnt) / sc.duration.Seconds())
 	}
 
 	logger.Print("\nFinal Error Totals\n")
@@ -148,6 +148,9 @@ func main() {
 		}
 	}
 
+
+
+	
 	
 	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), totalFailureCnt, totalAllocCnt, (float64) (totalFailureCnt) / (float64) (totalAllocCnt), (float64) (totalAllocCnt - totalFailureCnt) / totalDuration)
 }
