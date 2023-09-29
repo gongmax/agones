@@ -33,15 +33,16 @@ steps:
       - ${_TEST_CLUSTER_NAME}
       - ${_TEST_CLUSTER_LOCATION}
       - ${_REGISTRY}
-      - $PROJECT_ID
+      - ${_TEST_PROJECT_ID}
     id: perf-test
     waitFor:
       - build-perf
   
 substitutions:
-  _TEST_CLUSTER_NAME: standard-e2e-test-cluster-1-27
-  _TEST_CLUSTER_LOCATION: us-east1
+  _TEST_CLUSTER_NAME: standard-performance-test-cluster-1-26
+  _TEST_CLUSTER_LOCATION: us-central1
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
+  _TEST_PROJECT_ID: agones-e2e-1
 tags: [ci, 'commit-${COMMIT_SHA}']
 timeout: 18000s  # 5h: 3h (e2e-wait-to-become-leader) + 1.5h (e2e timeout) + 0.5h (everything else)
 queueTtl: 259200s  # 72h
