@@ -78,12 +78,12 @@ push-chart: $(ensure-build-image) build-chart
 
 # Ensure the example images exists
 pre-build-release:
-	docker run --rm $(common_mounts) -w $(workdir_path) $(build_tag) \
-		gcloud builds submit . --config=./build/release/pre_cloudbuild.yaml $(ARGS)
+	docker run --rm $(common_mounts) -w $(workdir_path)/build/release $(build_tag) \
+		gcloud builds submit . --config=./pre_cloudbuild.yaml $(ARGS)
 
 # Build and push the images in the release repository,
 # stores artifacts,
 # Pushes the current chart version to the helm repository hosted on gcs.
 post-build-release:
-	docker run --rm $(common_mounts) -w $(workdir_path) $(build_tag) \
-		gcloud builds submit . --substitutions _VERSION=$(base_version) --config=./build/release/post_cloudbuild.yaml $(ARGS)
+	docker run --rm $(common_mounts) -w $(workdir_path)/build/release $(build_tag) \
+		gcloud builds submit . --substitutions _VERSION=$(base_version) --config=./post_cloudbuild.yaml $(ARGS)
