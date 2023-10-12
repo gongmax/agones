@@ -18,6 +18,14 @@ TEST_CLUSTER_NAME=$1
 TEST_CLUSTER_LOCATION=$2
 REGISTRY=$3
 PROJECT=$4
+REPLICAS=$5
+AUTO_SHUTDOWN_DELAY=$6
+BUFFER_SIZE=$7
+MIN_REPLICAS=$8
+MAX_REPLICAS=$9
+DURATION=${10}
+CLIENTS=${11}
+DURATION=${12}
 
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
@@ -31,13 +39,31 @@ gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
 cd /go/src/agones.dev/agones/test/load/allocation
-kubectl apply -f fleet.yaml
-kubectl apply -f autoscaler.yaml
 
-while [ $(kubectl get -f fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
+cp performance-test-fleet-template.yaml performance-test-fleet.yaml
+cp performance-test-autoscaler-template.yaml performance-test-autoscaler.yaml
+cp performance-test-variable-template.yaml performance-test-variable.yaml
+
+sed -i 's/{replicas}/'$REPLICAS'/g' performance-test-fleet.yaml
+sed -i 's/{automaticShutdownDelaySec}/'$AUTO_SHUTDOWN_DELAY'/g' performance-test-fleet.yaml
+
+sed -i 's/{bufferSize}/'$BUFFER_SIZE'/g' performance-test-autoscaler.yaml
+sed -i 's/{minReplicas}/'$MIN_REPLICAS'/g' performance-test-autoscaler.yaml
+sed -i 's/{maxReplicas}/'$MAX_REPLICAS'/g' performance-test-autoscaler.yaml
+
+sed -i 's/{duration}/'$DURATION'/g' performance-test-variable.yaml
+sed -i 's/{clients}/'$CLIENTS'/g' performance-test-variable.yaml
+sed -i 's/{interval}/'$DURATION'/g' performance-test-variable.yaml
+
+kubectl apply -f performance-test-fleet.yaml
+kubectl apply -f performance-test-autoscaler.yaml
+
+while [ $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
 do
     sleep 1
 done
 
-./runScenario.sh variable2.txt
+cat performance-test-variable.yaml
+# ./runScenario.sh performance-test-variable.yaml
 echo "Finish testing."
+rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.yaml

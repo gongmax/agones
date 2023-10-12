@@ -43,6 +43,14 @@ substitutions:
   _TEST_CLUSTER_LOCATION: us-central1
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
   _TEST_PROJECT_ID: agones-e2e-1
+  _TEST_FLEET_REPLICAS: 10
+  _TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC: 60
+  _TEST_BUFFER_SIZE: 10
+  _TEST_MIN_REPLICAS: 10
+  _TEST_MAX_REPLICAS: 6000
+  _TEST_DURATION: 10m
+  _TEST_CLIENTS: 50
+  _TEST_INTERVAL: 1000
 tags: [ci, 'commit-${COMMIT_SHA}']
 timeout: 18000s  # 5h: 3h (e2e-wait-to-become-leader) + 1.5h (e2e timeout) + 0.5h (everything else)
 queueTtl: 259200s  # 72h
