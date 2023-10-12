@@ -42,7 +42,7 @@ cd /go/src/agones.dev/agones/test/load/allocation
 
 cp performance-test-fleet-template.yaml performance-test-fleet.yaml
 cp performance-test-autoscaler-template.yaml performance-test-autoscaler.yaml
-cp performance-test-variable-template.yaml performance-test-variable.yaml
+cp performance-test-variable-template.txt performance-test-variable.txt
 
 sed -i 's/{replicas}/'$REPLICAS'/g' performance-test-fleet.yaml
 sed -i 's/{automaticShutdownDelaySec}/'$AUTO_SHUTDOWN_DELAY'/g' performance-test-fleet.yaml
@@ -51,9 +51,9 @@ sed -i 's/{bufferSize}/'$BUFFER_SIZE'/g' performance-test-autoscaler.yaml
 sed -i 's/{minReplicas}/'$MIN_REPLICAS'/g' performance-test-autoscaler.yaml
 sed -i 's/{maxReplicas}/'$MAX_REPLICAS'/g' performance-test-autoscaler.yaml
 
-sed -i 's/{duration}/'$DURATION'/g' performance-test-variable.yaml
-sed -i 's/{clients}/'$CLIENTS'/g' performance-test-variable.yaml
-sed -i 's/{interval}/'$DURATION'/g' performance-test-variable.yaml
+sed -i 's/{duration}/'$DURATION'/g' performance-test-variable.txt
+sed -i 's/{clients}/'$CLIENTS'/g' performance-test-variable.txt
+sed -i 's/{interval}/'$DURATION'/g' performance-test-variable.txt
 
 kubectl apply -f performance-test-fleet.yaml
 kubectl apply -f performance-test-autoscaler.yaml
@@ -63,7 +63,7 @@ do
     sleep 1
 done
 
-cat performance-test-variable.yaml
-# ./runScenario.sh performance-test-variable.yaml
+cat performance-test-variable.txt
+# ./runScenario.sh performance-test-variable.txt
 echo "Finish testing."
-rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.yaml
+rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.txt
