@@ -50,7 +50,7 @@ substitutions:
   _TEST_CLUSTER_NAME: standard-e2e-test-cluster-1-27
   _TEST_CLUSTER_LOCATION: us-east1
   _REGISTRY: us-docker.pkg.dev/agones-images/ci
-  _TEST_PROJECT_ID: gongmax-gke-test
+  _TEST_PROJECT_ID: gongmax-gke-dev
   _TEST_FLEET_REPLICAS: "10"
   _TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC: "60"
   _TEST_BUFFER_SIZE: "10"
