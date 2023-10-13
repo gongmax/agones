@@ -25,7 +25,7 @@ MIN_REPLICAS=$8
 MAX_REPLICAS=$9
 DURATION=${10}
 CLIENTS=${11}
-DURATION=${12}
+INTERVAL=${12}
 
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
@@ -53,7 +53,7 @@ sed -i 's/{maxReplicas}/'$MAX_REPLICAS'/g' performance-test-autoscaler.yaml
 
 sed -i 's/{duration}/'$DURATION'/g' performance-test-variable.txt
 sed -i 's/{clients}/'$CLIENTS'/g' performance-test-variable.txt
-sed -i 's/{interval}/'$DURATION'/g' performance-test-variable.txt
+sed -i 's/{interval}/'$INTERVAL'/g' performance-test-variable.txt
 
 kubectl apply -f performance-test-fleet.yaml
 kubectl apply -f performance-test-autoscaler.yaml
@@ -62,7 +62,8 @@ while [ $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.spec.replica
 do
     sleep 1
 done
-
+cat performance-test-fleet.yaml
+cat performance-test-autoscaler.yaml
 cat performance-test-variable.txt
 # ./runScenario.sh performance-test-variable.txt
 echo "Finish testing."
