@@ -56,7 +56,7 @@ sed -i 's/{clients}/'$CLIENTS'/g' performance-test-variable.txt
 sed -i 's/{interval}/'$INTERVAL'/g' performance-test-variable.txt
 
 kubectl apply -f performance-test-fleet.yaml
-# kubectl apply -f performance-test-autoscaler.yaml
+kubectl apply -f performance-test-autoscaler.yaml
 
 while [ $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
 do
