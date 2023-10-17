@@ -866,6 +866,7 @@ install-release: $(ensure-build-image)
 
 test-performance: $(ensure-build-image)
 	docker run --rm $(common_mounts) \
+		$(DOCKER_RUN_ARGS) \
 		$(build_tag) $(mount_path)/build/performance-test.sh \
 			$(CLUSTER_NAME) \
 			$(CLUSTER_LOCATION) \
