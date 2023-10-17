@@ -866,4 +866,4 @@ install-release: $(ensure-build-image)
 
 test-performance: $(ensure-build-image)
 	docker run --rm $(common_mounts) \
-		$(build_tag) $(mount_path)/build/extract-licenses.sh
+		$(build_tag) $(mount_path)/build/performance-test.sh
