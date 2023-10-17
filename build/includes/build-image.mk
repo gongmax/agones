@@ -50,6 +50,7 @@ endif
 # exit's clean if it doesn't exist, so can be used on CI
 pull-build-image:
 	echo $(LOCAL_TAG)
+	echo $(build_tag)
 	$(MAKE) pull-remote-build-image REMOTE_TAG=$(build_remote_tag) LOCAL_TAG=$(build_tag)
 
 # push the local build image up to your repository

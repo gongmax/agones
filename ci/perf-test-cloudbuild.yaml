@@ -31,7 +31,7 @@ steps:
   - name: make-docker 
     id: pull-build-image 
     dir: build 
-    env: ['REGISTRY=${_REGISTRY}', 'build_tag=performance-test', 'LOCAL_TAG=performance-test']
+    env: ['REGISTRY=${_REGISTRY}', 'build_tag=performance-test-haha', 'LOCAL_TAG=performance-test-xixi']
     args: [pull-build-image]
 
 
