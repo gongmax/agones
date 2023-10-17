@@ -101,8 +101,8 @@ steps:
     #   - ${_TEST_INTERVAL}
     automapSubstitutions: true
     id: perf-test
-    waitFor:
-      - build-perf
+    # waitFor:
+    #   - build-perf
 
   # #
   # # Run the performance tests with default feature gates setting
