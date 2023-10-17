@@ -37,7 +37,7 @@ steps:
   #
   # Run the performance tests with default feature gates setting
   #
-  - name: gcr.io/cloud-builders/gcloud
+  - name: agones-build:3f13293bd8
     script: |
         #!/usr/bin/env bash
         mkdir -p /go/src/agones.dev/
