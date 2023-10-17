@@ -14,17 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 set -e
-TEST_CLUSTER_NAME=$1
-TEST_CLUSTER_LOCATION=$2
-REGISTRY=$3
-PROJECT=$4
-REPLICAS=$5
-AUTO_SHUTDOWN_DELAY=$6
-BUFFER_SIZE=$7
-MAX_REPLICAS=$8
-DURATION=$9
-CLIENTS=${10}
-INTERVAL=${11}
 
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
