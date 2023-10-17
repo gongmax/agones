@@ -866,4 +866,15 @@ install-release: $(ensure-build-image)
 
 test-performance: $(ensure-build-image)
 	docker run --rm $(common_mounts) \
-		$(build_tag) $(mount_path)/build/performance-test.sh $(CLUSTER_NAME)
+		$(build_tag) $(mount_path)/build/performance-test.sh \
+			$(CLUSTER_NAME) \
+			$(CLUSTER_LOCATION) \
+			$(REGISTRY) \
+			$(PROJECT) \
+			$(REPLICAS) \
+			$(AUTO_SHUTDOWN_DELAY) \
+			$(BUFFER_SIZE) \
+			$(MAX_REPLICAS) \
+			$(DURATION) \
+			$(CLIENTS) \
+			$(INTERVAL)

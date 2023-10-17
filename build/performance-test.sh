@@ -15,6 +15,17 @@
 # limitations under the License.
 set -e
 CLUSTER_NAME=$1
+CLUSTER_LOCATION=$2
+REGISTRY=$3
+PROJECT=$4
+REPLICAS=$5
+AUTO_SHUTDOWN_DELAY=$6
+BUFFER_SIZE=$7
+MAX_REPLICAS=$8
+DURATION=$9
+CLIENTS=${10}
+INTERVAL=${11}
+
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
 ln -s /workspace /go/src/agones.dev/agones
