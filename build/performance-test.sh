@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 set -e
-
+CLUSTER_NAME=$1
 export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
 ln -s /workspace /go/src/agones.dev/agones
