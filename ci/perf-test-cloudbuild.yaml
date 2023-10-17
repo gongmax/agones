@@ -39,7 +39,7 @@ steps:
     id: run-test 
     dir: build 
     args: [test-performance]
-    waitFor: [pull-build-image-with-tag]
+    waitFor: [pull-build-image]
     env:
     - 'CLUSTER_NAME=${_TEST_CLUSTER_NAME}'
     - 'CLUSTER_LOCATION=${_TEST_CLUSTER_LOCATION}'
