@@ -25,15 +25,14 @@ steps:
   #   waitFor:
   #     - build-make-docker
 
-  #
-  # build the performance test runner
-  #
-  - name: gcr.io/cloud-builders/docker
-    args: [build, -f, Dockerfile, -t, build-image, .]
-    dir: build/build-image
-    id: build-perf
-    waitFor:
-      - build-make-docker
+# 
+ # pull the main build image if it exists 
+ # 
+ - name: make-docker 
+   id: pull-build-image 
+   dir: build 
+   env: ['REGISTRY=${_REGISTRY}'] 
+   args: [pull-build-image] 
 
   #
   # Run the performance tests with default feature gates setting
