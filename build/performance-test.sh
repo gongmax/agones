@@ -21,8 +21,8 @@ ln -s /workspace /go/src/agones.dev/agones
 cd /go/src/agones.dev/agones/build
 
 gcloud config set project $PROJECT
-gcloud container clusters get-credentials $TEST_CLUSTER_NAME \
-        --zone=${TEST_CLUSTER_LOCATION} --project=${PROJECT}
+gcloud container clusters get-credentials $CLUSTER_NAME \
+        --zone=${CLUSTER_LOCATION} --project=${PROJECT}
 
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
