@@ -31,80 +31,80 @@ steps:
   - name: make-docker 
     id: pull-build-image 
     dir: build 
-    env: ['REGISTRY=${_REGISTRY}', 'CUSTOM_LOCAL_TAG=performance-test-haha']
+    env: ['REGISTRY=${_REGISTRY}', 'CUSTOM_LOCAL_TAG=performance-test']
     args: [pull-build-image-with-tag]
 
 
-  - name: make-docker 
-    id: run-test 
-    dir: build 
-    args: [test-performance]
-    waitFor: [pull-build-image]
-    env:
-    - 'CLUSTER_NAME=${_TEST_CLUSTER_NAME}'
-    - 'CLUSTER_LOCATION=${_TEST_CLUSTER_LOCATION}'
-    - 'REGISTRY=${_REGISTRY}'
-    - 'PROJECT=${_TEST_PROJECT_ID}'
-    - 'REPLICAS=${_TEST_FLEET_REPLICAS}'
-    - 'AUTO_SHUTDOWN_DELAY=${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}'
-    - 'BUFFER_SIZE=${_TEST_BUFFER_SIZE}'
-    - 'MAX_REPLICAS=${_TEST_MAX_REPLICAS}'
-    - 'DURATION=${_TEST_DURATION}'
-    - 'CLIENTS=${_TEST_CLIENTS}'
-    - 'INTERVAL=${_TEST_INTERVAL}'
+  # - name: performance-test 
+  #   id: run-test 
+  #   dir: build 
+  #   args: [test-performance]
+  #   waitFor: [pull-build-image]
+  #   env:
+  #   - 'CLUSTER_NAME=${_TEST_CLUSTER_NAME}'
+  #   - 'CLUSTER_LOCATION=${_TEST_CLUSTER_LOCATION}'
+  #   - 'REGISTRY=${_REGISTRY}'
+  #   - 'PROJECT=${_TEST_PROJECT_ID}'
+  #   - 'REPLICAS=${_TEST_FLEET_REPLICAS}'
+  #   - 'AUTO_SHUTDOWN_DELAY=${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}'
+  #   - 'BUFFER_SIZE=${_TEST_BUFFER_SIZE}'
+  #   - 'MAX_REPLICAS=${_TEST_MAX_REPLICAS}'
+  #   - 'DURATION=${_TEST_DURATION}'
+  #   - 'CLIENTS=${_TEST_CLIENTS}'
+  #   - 'INTERVAL=${_TEST_INTERVAL}'
 
   #
   # Run the performance tests with default feature gates setting
   #
-  # - name: agones-build:3f13293bd8
-  #   script: |
-  #       #!/usr/bin/env bash
-  #       mkdir -p /go/src/agones.dev/
-  #       ln -s /workspace /go/src/agones.dev/agones
-  #       cd /go/src/agones.dev/agones/build
+  - name: performance-test
+    script: |
+        #!/usr/bin/env bash
+        mkdir -p /go/src/agones.dev/
+        ln -s /workspace /go/src/agones.dev/agones
+        cd /go/src/agones.dev/agones/build
 
-  #       gcloud config set project ${_TEST_PROJECT_ID}
-  #       gcloud container clusters get-credentials ${_TEST_CLUSTER_NAME} \
-  #               --zone=${_TEST_CLUSTER_LOCATION} --project=${_TEST_PROJECT_ID}
+        gcloud config set project ${_TEST_PROJECT_ID}
+        gcloud container clusters get-credentials ${_TEST_CLUSTER_NAME} \
+                --zone=${_TEST_CLUSTER_LOCATION} --project=${_TEST_PROJECT_ID}
 
-  #       DOCKER_RUN= make install REGISTRY='"'${_REGISTRY}'"' 
+        DOCKER_RUN= make install REGISTRY='"'${_REGISTRY}'"' 
 
-  #       cd /go/src/agones.dev/agones/test/load/allocation
+        cd /go/src/agones.dev/agones/test/load/allocation
 
-  #       # use the input values to populate the yaml files for fleet and autoscaler, and then apply them
-  #       cp performance-test-fleet-template.yaml performance-test-fleet.yaml
-  #       cp performance-test-autoscaler-template.yaml performance-test-autoscaler.yaml
-  #       cp performance-test-variable-template.txt performance-test-variable.txt
+        # use the input values to populate the yaml files for fleet and autoscaler, and then apply them
+        cp performance-test-fleet-template.yaml performance-test-fleet.yaml
+        cp performance-test-autoscaler-template.yaml performance-test-autoscaler.yaml
+        cp performance-test-variable-template.txt performance-test-variable.txt
 
-  #       sed -i 's/REPLICAS_REPLACEMENT/'${_TEST_FLEET_REPLICAS}'/g' performance-test-fleet.yaml
-  #       sed -i 's/AUTOMATIC_SHUTDOWN_DELAY_SEC_REPLACEMENT/'${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}'/g' performance-test-fleet.yaml
+        sed -i 's/REPLICAS_REPLACEMENT/'${_TEST_FLEET_REPLICAS}'/g' performance-test-fleet.yaml
+        sed -i 's/AUTOMATIC_SHUTDOWN_DELAY_SEC_REPLACEMENT/'${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}'/g' performance-test-fleet.yaml
 
-  #       sed -i 's/BUFFER_SIZE_REPLACEMENT/'${_TEST_BUFFER_SIZE}'/g' performance-test-autoscaler.yaml
-  #       sed -i 's/MIN_REPLICAS_REPLACEMENT/'${_TEST_FLEET_REPLICAS}'/g' performance-test-autoscaler.yaml
-  #       sed -i 's/MAX_REPLICAS_REPLACEMENT/'${_TEST_MAX_REPLICAS}'/g' performance-test-autoscaler.yaml
+        sed -i 's/BUFFER_SIZE_REPLACEMENT/'${_TEST_BUFFER_SIZE}'/g' performance-test-autoscaler.yaml
+        sed -i 's/MIN_REPLICAS_REPLACEMENT/'${_TEST_FLEET_REPLICAS}'/g' performance-test-autoscaler.yaml
+        sed -i 's/MAX_REPLICAS_REPLACEMENT/'${_TEST_MAX_REPLICAS}'/g' performance-test-autoscaler.yaml
 
-  #       sed -i 's/DURATION_REPLACEMENT/'${_TEST_DURATION}'/g' performance-test-variable.txt
-  #       sed -i 's/CLIENTS_REPLACEMENT/'${_TEST_CLIENTS}'/g' performance-test-variable.txt
-  #       sed -i 's/INTERVAL_REPLACEMENT/'${_TEST_INTERVAL}'/g' performance-test-variable.txt
+        sed -i 's/DURATION_REPLACEMENT/'${_TEST_DURATION}'/g' performance-test-variable.txt
+        sed -i 's/CLIENTS_REPLACEMENT/'${_TEST_CLIENTS}'/g' performance-test-variable.txt
+        sed -i 's/INTERVAL_REPLACEMENT/'${_TEST_INTERVAL}'/g' performance-test-variable.txt
 
-  #       kubectl apply -f performance-test-fleet.yaml
-  #       kubectl apply -f performance-test-autoscaler.yaml
+        kubectl apply -f performance-test-fleet.yaml
+        kubectl apply -f performance-test-autoscaler.yaml
 
-  #       # wait for the fleet to be ready
-  #       while [ $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
-  #       do
-  #           sleep 1
-  #       done
+        # wait for the fleet to be ready
+        while [ $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.spec.replicas}') != $(kubectl get -f performance-test-fleet.yaml -o=jsonpath='{.status.readyReplicas}') ]
+        do
+            sleep 1
+        done
 
-  #       cat performance-test-fleet.yaml
-  #       cat performance-test-autoscaler.yaml
-  #       cat performance-test-variable.txt
+        cat performance-test-fleet.yaml
+        cat performance-test-autoscaler.yaml
+        cat performance-test-variable.txt
 
-  #       printf "\nStart testing."
-  #       ./runScenario.sh performance-test-variable.txt
-  #       printf "\nFinish testing."
+        printf "\nStart testing."
+        ./runScenario.sh performance-test-variable.txt
+        printf "\nFinish testing."
 
-  #       rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.txt
+        rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.txt
 
   #   # args:
   #   #   - ${_TEST_CLUSTER_NAME}
@@ -118,30 +118,10 @@ steps:
   #   #   - ${_TEST_DURATION}
   #   #   - ${_TEST_CLIENTS}
   #   #   - ${_TEST_INTERVAL}
-  #   automapSubstitutions: true
-  #   id: perf-test
-  #   # waitFor:
-  #   #   - build-perf
-
-  # #
-  # # Run the performance tests with default feature gates setting
-  # #
-  # - name: perf-runner
-  #   args:
-  #     - ${_TEST_CLUSTER_NAME}
-  #     - ${_TEST_CLUSTER_LOCATION}
-  #     - ${_REGISTRY}
-  #     - ${_TEST_PROJECT_ID}
-  #     - ${_TEST_FLEET_REPLICAS}
-  #     - ${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}
-  #     - ${_TEST_BUFFER_SIZE}
-  #     - ${_TEST_MAX_REPLICAS}
-  #     - ${_TEST_DURATION}
-  #     - ${_TEST_CLIENTS}
-  #     - ${_TEST_INTERVAL}
-  #   id: perf-test
-  #   waitFor:
-  #     - build-perf
+    automapSubstitutions: true
+    id: perf-test
+    waitFor:
+      - pull-build-image 
 
 substitutions:
   _TEST_CLUSTER_NAME: standard-e2e-test-cluster-1-27
