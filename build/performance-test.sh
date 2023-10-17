@@ -19,6 +19,8 @@ export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
 ln -s /workspace /go/src/agones.dev/agones
 cd /go/src/agones.dev/agones/build
+echo "!!!!!!"
+echo $PROJECT
 
 gcloud config set project $PROJECT
 gcloud container clusters get-credentials $CLUSTER_NAME \
