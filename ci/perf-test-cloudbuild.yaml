@@ -32,14 +32,14 @@ steps:
     id: pull-build-image 
     dir: build 
     env: ['REGISTRY=${_REGISTRY}', 'CUSTOM_LOCAL_TAG=performance-test-haha']
-    args: [pull-build-image]
+    args: [pull-build-image-with-tag]
 
 
   - name: make-docker 
     id: run-test 
     dir: build 
     args: [test-performance]
-    waitFor: [pull-build-image]
+    waitFor: [pull-build-image-with-tag]
     env:
     - 'CLUSTER_NAME=${_TEST_CLUSTER_NAME}'
     - 'CLUSTER_LOCATION=${_TEST_CLUSTER_LOCATION}'
