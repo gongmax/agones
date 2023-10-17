@@ -865,5 +865,5 @@ install-release: $(ensure-build-image)
 		$(build_tag) /go/src/agones.dev/agones/build/install-release.sh
 
 test-performance: $(ensure-build-image)
-	docker run --rm $(common_mounts) -w $(workdir_path) \
-		$(build_tag) /go/src/agones.dev/agones/build/performance-test.sh
+	docker run --rm $(common_mounts) \
+		$(build_tag) $(mount_path)/build/performance-test.sh
