@@ -100,6 +100,7 @@ steps:
     #   - ${_TEST_DURATION}
     #   - ${_TEST_CLIENTS}
     #   - ${_TEST_INTERVAL}
+    automapSubstitutions: true
     id: perf-test
     waitFor:
       - build-perf
