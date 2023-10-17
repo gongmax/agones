@@ -38,7 +38,7 @@ steps:
   #
   # Run the performance tests with default feature gates setting
   #
-  - name: build-image
+  - name: gcr.io/cloud-builders/gcloud
     script: |
         #!/usr/bin/env bash
         mkdir -p /go/src/agones.dev/
