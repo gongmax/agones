@@ -1,4 +1,20 @@
 ---
+# Copyright 2023 Google LLC All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Google Cloud Builder CI configuration
+#
 steps:
   #
   # Creates the initial make + docker build platform
@@ -15,16 +31,6 @@ steps:
     id: build-make-docker
     args: [build, -f, Dockerfile.build, -t, make-docker, .]  # we need docker and make to run everything.
 
-  # #
-  # # build the performance test runner
-  # #
-  # - name: gcr.io/cloud-builders/docker
-  #   args: [build, -f, Dockerfile, -t, perf-runner, .]
-  #   dir: build/perf-test-image
-  #   id: build-perf
-  #   waitFor:
-  #     - build-make-docker
-
   # 
   # pull the main build image if it exists 
   # 
@@ -33,25 +39,6 @@ steps:
     dir: build 
     env: ['REGISTRY=${_REGISTRY}', 'CUSTOM_LOCAL_TAG=performance-test']
     args: [pull-build-image-with-tag]
-
-
-  # - name: performance-test 
-  #   id: run-test 
-  #   dir: build 
-  #   args: [test-performance]
-  #   waitFor: [pull-build-image]
-  #   env:
-  #   - 'CLUSTER_NAME=${_TEST_CLUSTER_NAME}'
-  #   - 'CLUSTER_LOCATION=${_TEST_CLUSTER_LOCATION}'
-  #   - 'REGISTRY=${_REGISTRY}'
-  #   - 'PROJECT=${_TEST_PROJECT_ID}'
-  #   - 'REPLICAS=${_TEST_FLEET_REPLICAS}'
-  #   - 'AUTO_SHUTDOWN_DELAY=${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}'
-  #   - 'BUFFER_SIZE=${_TEST_BUFFER_SIZE}'
-  #   - 'MAX_REPLICAS=${_TEST_MAX_REPLICAS}'
-  #   - 'DURATION=${_TEST_DURATION}'
-  #   - 'CLIENTS=${_TEST_CLIENTS}'
-  #   - 'INTERVAL=${_TEST_INTERVAL}'
 
   #
   # Run the performance tests with default feature gates setting
@@ -105,21 +92,8 @@ steps:
         printf "\nFinish testing."
 
         rm performance-test-fleet.yaml performance-test-autoscaler.yaml performance-test-variable.txt
-
-  #   # args:
-  #   #   - ${_TEST_CLUSTER_NAME}
-  #   #   - ${_TEST_CLUSTER_LOCATION}
-  #   #   - ${_REGISTRY}
-  #   #   - ${_TEST_PROJECT_ID}
-  #   #   - ${_TEST_FLEET_REPLICAS}
-  #   #   - ${_TEST_AUTOMATIC_SHUTDOWN_DELAY_SEC}
-  #   #   - ${_TEST_BUFFER_SIZE}
-  #   #   - ${_TEST_MAX_REPLICAS}
-  #   #   - ${_TEST_DURATION}
-  #   #   - ${_TEST_CLIENTS}
-  #   #   - ${_TEST_INTERVAL}
     automapSubstitutions: true
-    id: perf-test
+    id: performance-test
     waitFor:
       - pull-build-image 
 
