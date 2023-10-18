@@ -30,12 +30,10 @@ export SHELL="/bin/bash"
 mkdir -p /go/src/agones.dev/
 ln -s /workspace /go/src/agones.dev/agones
 cd /go/src/agones.dev/agones/build
-echo "!!!!!!"
-echo $CLUSTER_NAME
 
-gcloud config set project gongmax-gke-dev
-gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 \
-        --zone=us-east1 --project=gongmax-gke-dev
+gcloud config set project ${_TEST_PROJECT_ID}
+gcloud container clusters get-credentials ${_TEST_CLUSTER_NAME} \
+        --zone=${_TEST_CLUSTER_LOCATION} --project=${_TEST_PROJECT_ID}
 
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
