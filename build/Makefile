@@ -32,7 +32,7 @@ base_version = 1.36.0
 #
 
 # Version defaults to the short hash of the latest commit
-VERSION ?= $(base_version)-dev-$(shell git rev-parse --short=7 HEAD)
+VERSION ?= $(base_version)-dev-92c9dec
 
 # kubectl configuration to use
 KUBECONFIG ?= ~/.kube/config
