@@ -33,9 +33,9 @@ cd /go/src/agones.dev/agones/build
 echo "!!!!!!"
 echo $CLUSTER_NAME
 
-gcloud config set project agones-images
+gcloud config set project gongmax-gke-dev
 gcloud container clusters get-credentials standard-e2e-test-cluster-1-27 \
-        --zone=us-east1 --project=agones-images
+        --zone=us-east1 --project=gongmax-gke-dev
 
 DOCKER_RUN= make install REGISTRY='"'$REGISTRY'"' 
 
