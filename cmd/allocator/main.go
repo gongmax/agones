@@ -416,6 +416,7 @@ func newServiceHandler(ctx context.Context, kubeClient kubernetes.Interface, ago
 		h.tlsMutex.Lock()
 		h.tlsCert = tlsCert
 		h.tlsMutex.Unlock()
+		logger.WithField("tlsCert", tlsCert).Info("Loaded TLS certs for allocator")
 
 		if !h.mTLSDisabled {
 			caCertPool, err := getCACertPool(certDir)
