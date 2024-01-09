@@ -90,7 +90,7 @@ func (s *Server) setupServer() {
 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
 		return
 	}
-	s.logger.WithField("certs", tlsCert).Info("Loaded TLS certs")
+	s.logger.Info("Loaded TLS certs")
 
 	s.CertMu.Lock()
 	defer s.CertMu.Unlock()
