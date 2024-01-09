@@ -88,7 +88,7 @@ func (s *Server) setupServer() {
 
 	// Load the new TLS certificate
 	s.logger.Info("Loading TLS certs")
-	file, err := os.Open("file.txt")
+	file, err := os.Open(tlsDir+"server.crt")
     defer func() {
         if err = file.Close(); err != nil {
             s.logger.Fatal(err)
