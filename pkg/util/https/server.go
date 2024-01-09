@@ -65,10 +65,11 @@ func NewServer(certFile, keyFile string) *Server {
 		keyFile:  keyFile,
 	}
 
+	wh.logger = runtime.NewLoggerWithType(wh)
+
 	wh.setupServer()
 
 	wh.Mux.HandleFunc("/", wh.defaultHandler)
-	wh.logger = runtime.NewLoggerWithType(wh)
 
 	return wh
 }
@@ -90,7 +91,7 @@ func (s *Server) setupServer() {
 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
 		return
 	}
-	s.logger.Info("Loaded TLS certs")
+	s.logger.WithField("certs", tlsCert).Info("Loaded TLS certs")
 
 	s.CertMu.Lock()
 	defer s.CertMu.Unlock()
