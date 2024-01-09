@@ -248,6 +248,7 @@ func main() {
 
 	if !h.tlsDisabled {
 		cancelTLS, err := fswatch.Watch(logger, tlsDir, time.Second, func() {
+			logger.Info("TLS certs changed for allocator, reloading")
 			tlsCert, err := readTLSCert()
 			if err != nil {
 				logger.WithError(err).Error("could not load TLS certs; keeping old one")

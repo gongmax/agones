@@ -20,6 +20,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"os"
+	"io/ioutil"
 
 	"agones.dev/agones/pkg/util/fswatch"
 	"agones.dev/agones/pkg/util/runtime"
@@ -86,6 +88,16 @@ func (s *Server) setupServer() {
 
 	// Load the new TLS certificate
 	s.logger.Info("Loading TLS certs")
+	file, err := os.Open("file.txt")
+    defer func() {
+        if err = file.Close(); err != nil {
+            s.logger.Fatal(err)
+        }
+    }()
+
+
+  	b, err := ioutil.ReadAll(file)
+	s.logger.Info("tlsDir: " + string(b[:]))
 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
 	if err != nil {
 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
