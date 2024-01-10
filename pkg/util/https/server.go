@@ -23,7 +23,7 @@ import (
 	"os"
 	"io/ioutil"
 
-	"agones.dev/agones/pkg/util/fswatch"
+	// "agones.dev/agones/pkg/util/fswatch"
 	"agones.dev/agones/pkg/util/runtime"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -112,6 +112,7 @@ func (s *Server) setupServer() {
 	s.logger.Info("TLS certs updated")
 	
 	go s.watchForCertificateChanges()
+	s.logger.Info("TLS certs watcher started")
 }
 
 // getCertificate returns the current TLS certificate
@@ -137,7 +138,7 @@ func (s *Server) watchForCertificateChanges() {
 		defer s.CertMu.Unlock()
 		// Update the Certs structure with the new certificate
 		s.Certs = &tlsCert
-		s.logger.Info("TLS certs updated")
+		s.logger.WithField("certs", tlsCert).Info("Updated TLS certs")
 	}
 	// cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
 	// 	// Load the new TLS certificate
