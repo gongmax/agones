@@ -42,7 +42,6 @@ func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEve
 		cancel()
 		return nil, err
 	}
-
 	go batchWatch(batchFor, watcher.Events, watcher.Errors, cancelChan, processEvent, func(error) {
 		logger.WithError(err).Errorf("error watching path")
 	})
@@ -53,6 +52,7 @@ func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEve
 // Intended for batching of rapid-fire events where we want to process the batch once, like filesystem update notifications.
 func batchWatch(batchFor time.Duration, events chan fsnotify.Event, errors chan error, cancelChan chan struct{}, processEvent func(), onError func(error)) {
 	// Pattern shamelessly stolen from https://blog.gopheracademy.com/advent-2013/day-24-channel-buffering-patterns/
+	processEvent()
 	timer := time.NewTimer(0)
 	var timerCh <-chan time.Time
 
