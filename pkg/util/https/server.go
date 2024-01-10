@@ -142,7 +142,7 @@ func (s *Server) watchForCertificateChanges() {
 	// 	return
 	// }
 	// return
-	cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
+	cancelTLS, err := fswatch.Watch(s.logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate
 		s.logger.Info("TLS certs changed, reloading")
 		tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
