@@ -28,6 +28,7 @@ import (
 // Returns a cancel() function to terminate the watch.
 func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEvent func()) (func(), error) {
 	logger = logger.WithField("path", path)
+	logger.Info("watching path" + path)
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err

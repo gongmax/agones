@@ -23,7 +23,7 @@ import (
 	"os"
 	"io/ioutil"
 
-	// "agones.dev/agones/pkg/util/fswatch"
+	"agones.dev/agones/pkg/util/fswatch"
 	"agones.dev/agones/pkg/util/runtime"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -111,7 +111,7 @@ func (s *Server) setupServer() {
 	s.Certs = &tlsCert
 	s.logger.Info("TLS certs updated")
 	
-	go s.watchForCertificateChanges()
+	s.watchForCertificateChanges()
 	s.logger.Info("TLS certs watcher started")
 }
 
