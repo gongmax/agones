@@ -125,7 +125,7 @@ func (s *Server) getCertificate(hello *cryptotls.ClientHelloInfo) (*cryptotls.Ce
 // watchForCertificateChanges watches for changes in the certificate files
 func (s *Server) watchForCertificateChanges() {
 	// Watch for changes in the tlsDir
-	// s.logger.Info("Setup TLS certs watcher")
+	s.logger.Info("Setup TLS certs watcher")
 	for {
 		time.Sleep(2 * time.Minute)
 		s.logger.Info("In TLS certs refresh loop")
@@ -141,7 +141,7 @@ func (s *Server) watchForCertificateChanges() {
 		s.logger.WithField("certs", tlsCert).Info("Updated TLS certs")
 		return
 	}
-	// return
+	return
 	// cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
 	// 	// Load the new TLS certificate
 	// 	s.logger.Info("TLS certs changed, reloading")
