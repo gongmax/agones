@@ -111,7 +111,7 @@ func (s *Server) setupServer() {
 	s.Certs = &tlsCert
 	s.logger.Info("TLS certs updated")
 	
-	s.watchForCertificateChanges()
+	go s.watchForCertificateChanges()
 }
 
 // getCertificate returns the current TLS certificate
@@ -125,9 +125,9 @@ func (s *Server) getCertificate(hello *cryptotls.ClientHelloInfo) (*cryptotls.Ce
 func (s *Server) watchForCertificateChanges() {
 	// Watch for changes in the tlsDir
 	s.logger.Info("Setup TLS certs watcher")
-	cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
-		// Load the new TLS certificate
-		s.logger.Info("TLS certs changed, reloading")
+	for {
+		time.Sleep(1 * time.Minute)
+		s.logger.Info("In TLS certs refresh loop")
 		tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
 		if err != nil {
 			s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
@@ -138,12 +138,26 @@ func (s *Server) watchForCertificateChanges() {
 		// Update the Certs structure with the new certificate
 		s.Certs = &tlsCert
 		s.logger.Info("TLS certs updated")
-	})
-	if err != nil {
-		s.logger.WithError(err).Fatal("could not create watcher for TLS certs")
 	}
+	// cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
+	// 	// Load the new TLS certificate
+	// 	s.logger.Info("TLS certs changed, reloading")
+	// 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
+	// 	if err != nil {
+	// 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
+	// 		return
+	// 	}
+	// 	s.CertMu.Lock()
+	// 	defer s.CertMu.Unlock()
+	// 	// Update the Certs structure with the new certificate
+	// 	s.Certs = &tlsCert
+	// 	s.logger.Info("TLS certs updated")
+	// })
+	// if err != nil {
+	// 	s.logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	// }
 
-	defer cancelTLS()
+	// defer cancelTLS()
 }
 
 // func readTLSCert() (*cryptotls.Certificate, error) {
