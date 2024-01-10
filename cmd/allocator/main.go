@@ -247,7 +247,7 @@ func main() {
 	h := newServiceHandler(ctx, kubeClient, agonesClient, health, conf.MTLSDisabled, conf.TLSDisabled, conf.remoteAllocationTimeout, conf.totalRemoteAllocationTimeout, conf.allocationBatchWaitTime)
 
 	if !h.tlsDisabled {
-		cancelTLS, err := fswatch.Watch(logger, tlsDir, time.Second, func() {
+		cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
 			logger.Info("TLS certs changed for allocator, reloading")
 			tlsCert, err := readTLSCert()
 			if err != nil {
