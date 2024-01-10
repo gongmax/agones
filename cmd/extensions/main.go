@@ -141,13 +141,6 @@ func main() {
 		logger.WithError(err).Fatal("Could not initialize cloud product")
 	}
 	// https server and the items that share the Mux for routing
-	httpsServer := https.NewServer(ctlConf.CertFile, ctlConf.KeyFile)
-	wh := webhooks.NewWebHook(httpsServer.Mux)
-	api := apiserver.NewAPIServer(httpsServer.Mux)
-
-	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
-	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
-
 	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate
 		logger.Info("TLS certs changed in main, reloading")
@@ -157,6 +150,13 @@ func main() {
 	}
 
 	defer cancelTLS()
+	
+	httpsServer := https.NewServer(ctlConf.CertFile, ctlConf.KeyFile)
+	wh := webhooks.NewWebHook(httpsServer.Mux)
+	api := apiserver.NewAPIServer(httpsServer.Mux)
+
+	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
+	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
 
 	server := &httpServer{}
 	var health healthcheck.Handler
