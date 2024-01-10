@@ -24,6 +24,9 @@ import (
 	"strings"
 	"time"
 
+	"agones.dev/agones/pkg/util/fswatch"
+
+
 	"agones.dev/agones/pkg"
 	"agones.dev/agones/pkg/client/clientset/versioned"
 	"agones.dev/agones/pkg/client/informers/externalversions"
@@ -144,6 +147,16 @@ func main() {
 
 	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
 	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
+
+	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
+		// Load the new TLS certificate
+		logger.Info("TLS certs changed in main, reloading")
+	})
+	if err != nil {
+		logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	}
+
+	defer cancelTLS()
 
 	server := &httpServer{}
 	var health healthcheck.Handler

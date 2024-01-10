@@ -72,7 +72,16 @@ func NewServer(certFile, keyFile string) *Server {
 	wh.setupServer()
 
 	wh.Mux.HandleFunc("/", wh.defaultHandler)
+	wh.logger.Info("Setup default handler")
+	cancelTLS, err := fswatch.Watch(wh.logger, "/home/", time.Second, func() {
+		// Load the new TLS certificate
+		wh.logger.Info("TLS certs changed in new server, reloading")
+	})
+	if err != nil {
+		wh.logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	}
 
+	defer cancelTLS()
 	return wh
 }
 
