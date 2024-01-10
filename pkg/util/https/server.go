@@ -23,7 +23,7 @@ import (
 	"os"
 	"io/ioutil"
 
-	// "agones.dev/agones/pkg/util/fswatch"
+	"agones.dev/agones/pkg/util/fswatch"
 	"agones.dev/agones/pkg/util/runtime"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -126,25 +126,9 @@ func (s *Server) getCertificate(hello *cryptotls.ClientHelloInfo) (*cryptotls.Ce
 func (s *Server) watchForCertificateChanges() {
 	// Watch for changes in the tlsDir
 	// s.logger.Info("Setup TLS certs watcher")
-	// for {
-	// 	time.Sleep(2 * time.Minute)
-	// 	s.logger.Info("In TLS certs refresh loop")
-	// 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
-	// 	if err != nil {
-	// 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
-	// 		return
-	// 	}
-	// 	s.CertMu.Lock()
-	// 	defer s.CertMu.Unlock()
-	// 	// Update the Certs structure with the new certificate
-	// 	s.Certs = &tlsCert
-	// 	s.logger.WithField("certs", tlsCert).Info("Updated TLS certs")
-	// 	return
-	// }
-	// return
-	cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
-		// Load the new TLS certificate
-		s.logger.Info("TLS certs changed, reloading")
+	for {
+		time.Sleep(2 * time.Minute)
+		s.logger.Info("In TLS certs refresh loop")
 		tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
 		if err != nil {
 			s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
@@ -154,11 +138,27 @@ func (s *Server) watchForCertificateChanges() {
 		defer s.CertMu.Unlock()
 		// Update the Certs structure with the new certificate
 		s.Certs = &tlsCert
-		s.logger.Info("TLS certs updated")
-	})
-	if err != nil {
-		s.logger.WithError(err).Fatal("could not create watcher for TLS certs")
+		s.logger.WithField("certs", tlsCert).Info("Updated TLS certs")
+		return
 	}
+	// return
+	// cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
+	// 	// Load the new TLS certificate
+	// 	s.logger.Info("TLS certs changed, reloading")
+	// 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
+	// 	if err != nil {
+	// 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
+	// 		return
+	// 	}
+	// 	s.CertMu.Lock()
+	// 	defer s.CertMu.Unlock()
+	// 	// Update the Certs structure with the new certificate
+	// 	s.Certs = &tlsCert
+	// 	s.logger.Info("TLS certs updated")
+	// })
+	// if err != nil {
+	// 	s.logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	// }
 
 	// defer cancelTLS()
 }
