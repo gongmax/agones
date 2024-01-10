@@ -111,7 +111,7 @@ func (s *Server) setupServer() {
 	s.Certs = &tlsCert
 	s.logger.Info("TLS certs updated")
 	
-	go s.watchForCertificateChanges()
+	s.watchForCertificateChanges()
 }
 
 // getCertificate returns the current TLS certificate
