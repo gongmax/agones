@@ -24,9 +24,6 @@ import (
 	"strings"
 	"time"
 
-	// "agones.dev/agones/pkg/util/fswatch"
-
-
 	"agones.dev/agones/pkg"
 	"agones.dev/agones/pkg/client/clientset/versioned"
 	"agones.dev/agones/pkg/client/informers/externalversions"
@@ -140,27 +137,11 @@ func main() {
 	if err != nil {
 		logger.WithError(err).Fatal("Could not initialize cloud product")
 	}
-
+	// https server and the items that share the Mux for routing
 	httpsServer := https.NewServer(ctlConf.CertFile, ctlConf.KeyFile)
 	wh := webhooks.NewWebHook(httpsServer.Mux)
 	api := apiserver.NewAPIServer(httpsServer.Mux)
 
-	// watchcert()
-	ex, err := os.Executable()
-    if err != nil {
-        panic(err)
-    }
-    exPath := filepath.Dir(ex)
-    logger.Info("current path" + exPath)
-	// cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
-	// 	// Load the new TLS certificate
-	// 	logger.Info("TLS certs changed in main, reloading")
-	// })
-	// if err != nil {
-	// 	logger.WithError(err).Fatal("could not create watcher for TLS certs")
-	// }
-
-	// defer cancelTLS()
 	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
 	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
 
@@ -240,24 +221,6 @@ func main() {
 	logger.Info("Shut down agones extensions")
 }
 
-// func watchcert() {
-// 	ex, err := os.Executable()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	exPath := filepath.Dir(ex)
-// 	logger.Info("current path in submethod" + exPath)
-// 	// https server and the items that share the Mux for routing
-// 	_, err = fswatch.Watch(logger, "/home/", time.Second, func() {
-// 		// Load the new TLS certificate
-// 		logger.Info("TLS certs changed in main submethod, reloading")
-// 	})
-// 	if err != nil {
-// 		logger.WithError(err).Fatal("could not create watcher for TLS certs")
-// 	}
-
-// 	// defer cancelTLS()
-// }
 func parseEnvFlags() config {
 	exec, err := os.Executable()
 	if err != nil {

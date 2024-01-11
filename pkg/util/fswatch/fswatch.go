@@ -28,7 +28,6 @@ import (
 // Returns a cancel() function to terminate the watch.
 func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEvent func()) (func(), error) {
 	logger = logger.WithField("path", path)
-	logger.Info("watching path" + path)
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
@@ -50,9 +49,8 @@ func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEve
 
 // batchWatch: watch for events; when an event occurs, keep draining events for duration `batchFor`, then call processEvent().
 // Intended for batching of rapid-fire events where we want to process the batch once, like filesystem update notifications.
-func batchWatch(logger *logrus.Entry, batchFor time.Duration, events chan fsnotify.Event, errors chan error, cancelChan chan struct{}, processEvent func(), onError func(error)) {
+func batchWatch(batchFor time.Duration, events chan fsnotify.Event, errors chan error, cancelChan chan struct{}, processEvent func(), onError func(error)) {
 	// Pattern shamelessly stolen from https://blog.gopheracademy.com/advent-2013/day-24-channel-buffering-patterns/
-	processEvent()
 	timer := time.NewTimer(0)
 	var timerCh <-chan time.Time
 

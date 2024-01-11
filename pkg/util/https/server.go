@@ -72,16 +72,7 @@ func NewServer(certFile, keyFile string) *Server {
 	wh.setupServer()
 
 	wh.Mux.HandleFunc("/", wh.defaultHandler)
-	wh.logger.Info("Setup default handler")
-	// _, err := fswatch.Watch(wh.logger, tlsDir, time.Second, func() {
-	// 	// Load the new TLS certificate
-	// 	wh.logger.Info("TLS certs changed in new server, reloading")
-	// })
-	// if err != nil {
-	// 	wh.logger.WithError(err).Fatal("could not create watcher for TLS certs")
-	// }
-
-	// defer cancelTLS()
+	
 	return wh
 }
 
@@ -97,16 +88,6 @@ func (s *Server) setupServer() {
 
 	// Load the new TLS certificate
 	s.logger.Info("Loading TLS certs")
-	file, err := os.Open(tlsDir+"server.crt")
-    defer func() {
-        if err = file.Close(); err != nil {
-            s.logger.Fatal(err)
-        }
-    }()
-
-
-  	b, err := ioutil.ReadAll(file)
-	s.logger.Info("tlsDir: " + string(b[:]))
 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
 	if err != nil {
 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
@@ -135,22 +116,6 @@ func (s *Server) getCertificate(hello *cryptotls.ClientHelloInfo) (*cryptotls.Ce
 func (s *Server) watchForCertificateChanges() {
 	// Watch for changes in the tlsDir
 	s.logger.Info("Setup TLS certs watcher")
-	// for {
-	// 	time.Sleep(2 * time.Minute)
-	// 	s.logger.Info("In TLS certs refresh loop")
-	// 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
-	// 	if err != nil {
-	// 		s.logger.WithError(err).Error("could not load TLS certs; keeping old one")
-	// 		return
-	// 	}
-	// 	s.CertMu.Lock()
-	// 	defer s.CertMu.Unlock()
-	// 	// Update the Certs structure with the new certificate
-	// 	s.Certs = &tlsCert
-	// 	s.logger.WithField("certs", tlsCert).Info("Updated TLS certs")
-	// 	return
-	// }
-	// return
 	_, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
 		// Load the new TLS certificate
 		s.logger.Info("TLS certs changed, reloading")
@@ -171,14 +136,6 @@ func (s *Server) watchForCertificateChanges() {
 
 	// defer cancelTLS()
 }
-
-// func readTLSCert() (*cryptotls.Certificate, error) {
-// 	tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"tls.crt", tlsDir+"tls.key")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return &tlsCert, nil
-// }
 
 // Run runs the webhook server, starting a https listener.
 // Will close the http server on stop channel close.

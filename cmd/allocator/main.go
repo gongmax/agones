@@ -247,8 +247,7 @@ func main() {
 	h := newServiceHandler(ctx, kubeClient, agonesClient, health, conf.MTLSDisabled, conf.TLSDisabled, conf.remoteAllocationTimeout, conf.totalRemoteAllocationTimeout, conf.allocationBatchWaitTime)
 
 	if !h.tlsDisabled {
-		cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
-			logger.Info("TLS certs changed for allocator, reloading")
+		cancelTLS, err := fswatch.Watch(logger, tlsDir, time.Second, func() {
 			tlsCert, err := readTLSCert()
 			if err != nil {
 				logger.WithError(err).Error("could not load TLS certs; keeping old one")
@@ -417,7 +416,6 @@ func newServiceHandler(ctx context.Context, kubeClient kubernetes.Interface, ago
 		h.tlsMutex.Lock()
 		h.tlsCert = tlsCert
 		h.tlsMutex.Unlock()
-		logger.WithField("tlsCert", tlsCert).Info("Loaded TLS certs for allocator")
 
 		if !h.mTLSDisabled {
 			caCertPool, err := getCACertPool(certDir)
