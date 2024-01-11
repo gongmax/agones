@@ -145,6 +145,7 @@ func main() {
 	wh := webhooks.NewWebHook(httpsServer.Mux)
 	api := apiserver.NewAPIServer(httpsServer.Mux)
 
+	watchcert()
 	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
 	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
 
