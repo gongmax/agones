@@ -242,13 +242,13 @@ func main() {
 
 func watchcert() {
 	ex, err := os.Executable()
-    if err != nil {
-        panic(err)
-    }
-    exPath := filepath.Dir(ex)
-    logger.Info("current path in submethod" + exPath)
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
+	logger.Info("current path in submethod" + exPath)
 	// https server and the items that share the Mux for routing
-	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
+	_, err = fswatch.Watch(logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate
 		logger.Info("TLS certs changed in main submethod, reloading")
 	})
@@ -256,7 +256,7 @@ func watchcert() {
 		logger.WithError(err).Fatal("could not create watcher for TLS certs")
 	}
 
-	defer cancelTLS()
+	// defer cancelTLS()
 }
 func parseEnvFlags() config {
 	exec, err := os.Executable()
