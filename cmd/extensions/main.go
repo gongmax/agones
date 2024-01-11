@@ -146,6 +146,12 @@ func main() {
 	api := apiserver.NewAPIServer(httpsServer.Mux)
 
 	watchcert()
+	ex, err := os.Executable()
+    if err != nil {
+        panic(err)
+    }
+    exPath := filepath.Dir(ex)
+    logger.Info("current path" + exPath)
 	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate
 		logger.Info("TLS certs changed in main, reloading")
@@ -235,6 +241,12 @@ func main() {
 }
 
 func watchcert() {
+	ex, err := os.Executable()
+    if err != nil {
+        panic(err)
+    }
+    exPath := filepath.Dir(ex)
+    logger.Info("current path in submethod" + exPath)
 	// https server and the items that share the Mux for routing
 	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate

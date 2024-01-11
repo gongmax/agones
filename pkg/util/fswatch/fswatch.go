@@ -33,6 +33,7 @@ func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEve
 	if err != nil {
 		return nil, err
 	}
+	logger.Info(watcher)
 	cancelChan := make(chan struct{})
 	cancel := func() {
 		close(cancelChan)
