@@ -140,17 +140,7 @@ func main() {
 	if err != nil {
 		logger.WithError(err).Fatal("Could not initialize cloud product")
 	}
-	// https server and the items that share the Mux for routing
-	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
-		// Load the new TLS certificate
-		logger.Info("TLS certs changed in main, reloading")
-	})
-	if err != nil {
-		logger.WithError(err).Fatal("could not create watcher for TLS certs")
-	}
 
-	defer cancelTLS()
-	
 	httpsServer := https.NewServer(ctlConf.CertFile, ctlConf.KeyFile)
 	wh := webhooks.NewWebHook(httpsServer.Mux)
 	api := apiserver.NewAPIServer(httpsServer.Mux)
@@ -234,6 +224,18 @@ func main() {
 	logger.Info("Shut down agones extensions")
 }
 
+func watchcert() {
+	// https server and the items that share the Mux for routing
+	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
+		// Load the new TLS certificate
+		logger.Info("TLS certs changed in main, reloading")
+	})
+	if err != nil {
+		logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	}
+
+	defer cancelTLS()
+}
 func parseEnvFlags() config {
 	exec, err := os.Executable()
 	if err != nil {
