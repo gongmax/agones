@@ -20,8 +20,6 @@ import (
 	"net/http"
 	"sync"
 	"time"
-	"os"
-	"io/ioutil"
 
 	"agones.dev/agones/pkg/util/fswatch"
 	"agones.dev/agones/pkg/util/runtime"

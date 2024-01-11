@@ -41,7 +41,7 @@ func Watch(logger *logrus.Entry, path string, batchFor time.Duration, processEve
 		cancel()
 		return nil, err
 	}
-	go batchWatch(logger, batchFor, watcher.Events, watcher.Errors, cancelChan, processEvent, func(error) {
+	go batchWatch(batchFor, watcher.Events, watcher.Errors, cancelChan, processEvent, func(error) {
 		logger.WithError(err).Errorf("error watching path")
 	})
 	return cancel, nil
