@@ -146,6 +146,15 @@ func main() {
 	api := apiserver.NewAPIServer(httpsServer.Mux)
 
 	watchcert()
+	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
+		// Load the new TLS certificate
+		logger.Info("TLS certs changed in main, reloading")
+	})
+	if err != nil {
+		logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	}
+
+	defer cancelTLS()
 	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
 	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
 
@@ -229,7 +238,7 @@ func watchcert() {
 	// https server and the items that share the Mux for routing
 	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
 		// Load the new TLS certificate
-		logger.Info("TLS certs changed in main, reloading")
+		logger.Info("TLS certs changed in main submethod, reloading")
 	})
 	if err != nil {
 		logger.WithError(err).Fatal("could not create watcher for TLS certs")
