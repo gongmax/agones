@@ -73,13 +73,13 @@ func NewServer(certFile, keyFile string) *Server {
 
 	wh.Mux.HandleFunc("/", wh.defaultHandler)
 	wh.logger.Info("Setup default handler")
-	_, err := fswatch.Watch(wh.logger, tlsDir, time.Second, func() {
-		// Load the new TLS certificate
-		wh.logger.Info("TLS certs changed in new server, reloading")
-	})
-	if err != nil {
-		wh.logger.WithError(err).Fatal("could not create watcher for TLS certs")
-	}
+	// _, err := fswatch.Watch(wh.logger, tlsDir, time.Second, func() {
+	// 	// Load the new TLS certificate
+	// 	wh.logger.Info("TLS certs changed in new server, reloading")
+	// })
+	// if err != nil {
+	// 	wh.logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	// }
 
 	// defer cancelTLS()
 	return wh
@@ -120,8 +120,8 @@ func (s *Server) setupServer() {
 	s.Certs = &tlsCert
 	s.logger.Info("TLS certs updated")
 	
-	// s.watchForCertificateChanges()
-	// s.logger.Info("TLS certs watcher started")
+	s.watchForCertificateChanges()
+	s.logger.Info("TLS certs watcher started")
 }
 
 // getCertificate returns the current TLS certificate
@@ -151,7 +151,7 @@ func (s *Server) watchForCertificateChanges() {
 	// 	return
 	// }
 	// return
-	cancelTLS, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
+	_, err := fswatch.Watch(s.logger, tlsDir, time.Second, func() {
 		// Load the new TLS certificate
 		s.logger.Info("TLS certs changed, reloading")
 		tlsCert, err := cryptotls.LoadX509KeyPair(tlsDir+"server.crt", tlsDir+"server.key")
@@ -169,7 +169,7 @@ func (s *Server) watchForCertificateChanges() {
 		s.logger.WithError(err).Fatal("could not create watcher for TLS certs")
 	}
 
-	defer cancelTLS()
+	// defer cancelTLS()
 }
 
 // func readTLSCert() (*cryptotls.Certificate, error) {
