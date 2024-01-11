@@ -152,15 +152,15 @@ func main() {
     }
     exPath := filepath.Dir(ex)
     logger.Info("current path" + exPath)
-	cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
-		// Load the new TLS certificate
-		logger.Info("TLS certs changed in main, reloading")
-	})
-	if err != nil {
-		logger.WithError(err).Fatal("could not create watcher for TLS certs")
-	}
+	// cancelTLS, err := fswatch.Watch(logger, "/home/", time.Second, func() {
+	// 	// Load the new TLS certificate
+	// 	logger.Info("TLS certs changed in main, reloading")
+	// })
+	// if err != nil {
+	// 	logger.WithError(err).Fatal("could not create watcher for TLS certs")
+	// }
 
-	defer cancelTLS()
+	// defer cancelTLS()
 	agonesInformerFactory := externalversions.NewSharedInformerFactory(agonesClient, defaultResync)
 	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, defaultResync)
 
