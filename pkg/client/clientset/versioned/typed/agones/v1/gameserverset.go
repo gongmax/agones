@@ -137,7 +137,11 @@ func (c *gameServerSets) Update(ctx context.Context, gameServerSet *v1.GameServe
 		Body(gameServerSet).
 		Do(ctx).
 		Into(result)
-	return
+
+	if err != nil {
+		logger.WithField("gss", gameServerSet).WithError(err).Error("failed to update gameserverset")
+	}
+	return result, err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
@@ -153,7 +157,11 @@ func (c *gameServerSets) UpdateStatus(ctx context.Context, gameServerSet *v1.Gam
 		Body(gameServerSet).
 		Do(ctx).
 		Into(result)
-	return
+
+	if err != nil {
+		logger.WithField("gss", gameServerSet).WithError(err).Error("failed to update gameserverset status")
+	}
+	return result, err
 }
 
 // Delete takes name of the gameServerSet and deletes it. Returns an error if one occurs.

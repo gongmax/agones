@@ -20,6 +20,7 @@ package workerqueue
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
@@ -169,6 +170,7 @@ func (wq *WorkerQueue) processNextWorkItem(ctx context.Context) bool {
 	defer wq.queue.Done(obj)
 
 	wq.logger.WithField(wq.keyName, obj).Debug("Processing")
+	wq.logger.WithField(wq.keyName, obj).Info("Workerqueue depty: " + strconv.Itoa(wq.queue.Len()))
 
 	var key string
 	var ok bool
@@ -188,11 +190,15 @@ func (wq *WorkerQueue) processNextWorkItem(ctx context.Context) bool {
 			runtime.HandleError(wq.logger.WithField(wq.keyName, obj), err)
 		}
 
+		wq.logger.WithField(wq.keyName, obj).Info("queueProcessingFailed: "+ err.Error())
+		wq.logger.WithField(wq.keyName, obj).Info("queueProcessingFailed, re-enque: "+ wq.keyName)
+
 		// we don't forget here, because we want this to be retried via the queue
 		wq.queue.AddRateLimited(obj)
 		return true
 	}
 
+	wq.logger.WithField(wq.keyName, obj).Info("Finished processing")
 	wq.queue.Forget(obj)
 	return true
 }

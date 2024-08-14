@@ -137,7 +137,11 @@ func (c *fleets) Update(ctx context.Context, fleet *v1.Fleet, opts metav1.Update
 		Body(fleet).
 		Do(ctx).
 		Into(result)
-	return
+
+	if err != nil {
+		logger.WithField("fleet", fleet).WithError(err).Error("failed to update fleet")
+	}
+	return result, err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
@@ -153,7 +157,11 @@ func (c *fleets) UpdateStatus(ctx context.Context, fleet *v1.Fleet, opts metav1.
 		Body(fleet).
 		Do(ctx).
 		Into(result)
-	return
+	
+	if err != nil {
+		logger.WithField("fleet", fleet).WithError(err).Error("failed to update fleet status")
+	}
+	return result, err
 }
 
 // Delete takes name of the fleet and deletes it. Returns an error if one occurs.

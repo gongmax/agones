@@ -105,6 +105,8 @@ type SDKServer struct {
 	gsReserveDuration   *time.Duration
 	gsPlayerCapacity    int64
 	gsConnectedPlayers  []string
+	gsCache 			map[string]int64
+	cMutex        		sync.RWMutex
 }
 
 // NewSDKServer creates a SDKServer that sets up an
@@ -141,6 +143,8 @@ func NewSDKServer(gameServerName, namespace string, kubeClient kubernetes.Interf
 		gsWaitForSync:      sync.WaitGroup{},
 		gsConnectedPlayers: []string{},
 		gsStateChannel:     make(chan agonesv1.GameServerState, 2),
+		gsCache: 			make(map[string]int64),
+		cMutex: 			sync.RWMutex{}, 
 	}
 
 	s.informerFactory = factory
@@ -328,9 +332,18 @@ func (s *SDKServer) updateState(ctx context.Context) error {
 	s.gsUpdateMutex.RUnlock()
 
 	gameServers := s.gameServerGetter.GameServers(s.namespace)
+	// gs, err := gameServers.Get(context.Background(), s.gameServerName, metav1.GetOptions{})
 	gs, err := s.gameServer()
 	if err != nil {
 		return err
+	}
+
+	s.cMutex.RLock()
+	generation, ok := s.gsCache[gs.Name]
+	s.cMutex.RUnlock()
+	if ok && (generation > gs.ObjectMeta.Generation) {
+		s.logger.WithField("gs", gs).Info("GameServer is stale. Skipping update.")
+		return workerqueue.NewDebugError(errors.New("GameServer is stale"))
 	}
 
 	// If we are currently in shutdown/being deleted, there is no escaping.
@@ -380,7 +393,11 @@ func (s *SDKServer) updateState(ctx context.Context) error {
 
 	gs, err = gameServers.Update(ctx, gsCopy, metav1.UpdateOptions{})
 	if err != nil {
-		return errors.Wrapf(err, "could not update GameServer %s/%s to state %s", s.namespace, s.gameServerName, gs.Status.State)
+		return errors.Wrapf(err, "could not update GameServer %s/%s to state %s", s.namespace, s.gameServerName, gsCopy.Status.State)
+	} else {
+		s.cMutex.Lock()
+		s.gsCache[gs.Name] = gs.ObjectMeta.Generation
+		s.cMutex.Unlock()
 	}
 
 	message := "SDK state change"

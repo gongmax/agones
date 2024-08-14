@@ -28,6 +28,8 @@ import (
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	rest "k8s.io/client-go/rest"
+
+	"agones.dev/agones/pkg/util/runtime"
 )
 
 // GameServersGetter has a method to return a GameServerInterface.
@@ -54,6 +56,8 @@ type gameServers struct {
 	client rest.Interface
 	ns     string
 }
+
+var logger  = runtime.NewLoggerWithSource("client")
 
 // newGameServers returns a GameServers
 func newGameServers(c *AgonesV1Client, namespace string) *gameServers {
@@ -132,7 +136,11 @@ func (c *gameServers) Update(ctx context.Context, gameServer *v1.GameServer, opt
 		Body(gameServer).
 		Do(ctx).
 		Into(result)
-	return
+	if err != nil {
+		gsu, _ := c.Get(ctx, gameServer.Name, metav1.GetOptions{})
+		logger.WithField("gs", gameServer).WithField("gsUpdated", gsu).WithError(err).Error("failed to update gameserver")
+	}
+	return result, err
 }
 
 // Delete takes name of the gameServer and deletes it. Returns an error if one occurs.

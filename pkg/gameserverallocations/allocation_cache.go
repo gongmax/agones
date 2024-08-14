@@ -38,7 +38,7 @@ type matcher func(*agonesv1.GameServer) bool
 
 // readyOrAllocatedGameServerMatcher returns true when a GameServer is in a Ready or Allocated state.
 func readyOrAllocatedGameServerMatcher(gs *agonesv1.GameServer) bool {
-	return gs.Status.State == agonesv1.GameServerStateReady || gs.Status.State == agonesv1.GameServerStateAllocated
+	return gs.Status.State == agonesv1.GameServerStateReady
 }
 
 // AllocationCache maintains a cache of GameServers that could potentially be allocated.
@@ -77,6 +77,7 @@ func NewAllocationCache(informer informerv1.GameServerInformer, counter *gameser
 			case newGs.IsBeingDeleted():
 				c.cache.Delete(key)
 			case c.matcher(newGs):
+				logger.WithField("gs", newGs).Info("Add GameServer to AllocationCache in UpdateFunc")
 				c.cache.Store(key, newGs)
 			case c.matcher(oldGs):
 				c.cache.Delete(key)
@@ -109,8 +110,10 @@ func (c *AllocationCache) loggerForGameServerKey(key string) *logrus.Entry {
 func (c *AllocationCache) RemoveGameServer(gs *agonesv1.GameServer) error {
 	key, _ := cache.MetaNamespaceKeyFunc(gs)
 	if ok := c.cache.Delete(key); !ok {
+		logger.WithField("gs", gs).Info("Removed GameServer from AllocationCache Error")
 		return ErrConflictInGameServerSelection
 	}
+	logger.WithField("gs", gs).Info("Removed GameServer from AllocationCache")
 	return nil
 }
 
@@ -145,7 +148,7 @@ func (c *AllocationCache) Run(ctx context.Context) error {
 // AddGameServer adds a gameserver to the cache of allocatable GameServers
 func (c *AllocationCache) AddGameServer(gs *agonesv1.GameServer) {
 	key, _ := cache.MetaNamespaceKeyFunc(gs)
-
+	logger.WithField("gs", gs).Info("Add GameServer to AllocationCache in AddGS")
 	c.cache.Store(key, gs)
 }
 
@@ -400,9 +403,11 @@ func (c *AllocationCache) syncCache() error {
 			if !(gs.DeletionTimestamp.IsZero() && c.matcher(gs)) {
 				c.cache.Delete(key)
 			} else if gs.ObjectMeta.ResourceVersion != gsCache.ObjectMeta.ResourceVersion {
+				logger.WithField("gs", gs).Info("Add GameServer to AllocationCache in SyncCache")
 				c.cache.Store(key, gs)
 			}
 		} else if gs.DeletionTimestamp.IsZero() && c.matcher(gs) {
+			logger.WithField("gs", gs).Info("Add GameServer to AllocationCache in SyncCache 2")
 			c.cache.Store(key, gs)
 		}
 	}

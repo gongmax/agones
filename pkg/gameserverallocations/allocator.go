@@ -78,7 +78,7 @@ const (
 	secretClientKeyName   = "tls.key"
 	secretCACertName      = "ca.crt"
 	allocatorPort         = "443"
-	maxBatchQueue         = 100
+	maxBatchQueue         = 1000
 	maxBatchBeforeRefresh = 100
 	localAllocationSource = "local"
 )
@@ -651,7 +651,9 @@ func (c *Allocator) applyAllocationToGameServer(ctx context.Context, mp allocati
 	}
 
 	gsUpdate, updateErr := c.gameServerGetter.GameServers(gs.ObjectMeta.Namespace).Update(ctx, gs, metav1.UpdateOptions{})
+	// gsAfter, _ := c.gameServerGetter.GameServers(gs.ObjectMeta.Namespace).Get(ctx, gs.ObjectMeta.Name, metav1.GetOptions{})
 	if updateErr != nil {
+		c.baseLogger.WithField("error", updateErr).WithField("gs", gs).WithField("cache", c.allocationCache).Info("Updated GameServer to Allocated Error")
 		return gsUpdate, updateErr
 	}
 

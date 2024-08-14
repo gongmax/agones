@@ -22,6 +22,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	// "math/rand"
 	"net"
 	"os"
 	"strconv"
@@ -117,8 +118,12 @@ func main() {
 			log.Printf("Waiting %d seconds before moving to ready", *readyDelaySec)
 			time.Sleep(time.Duration(*readyDelaySec) * time.Second)
 		}
-		log.Print("Marking this server as ready")
-		ready(s)
+		log.Print("Marking this server as Ready")
+		s.WatchGameServer(func(gs *coresdk.GameServer) {
+			if gs.Status.State == "Scheduled" {
+				ready(s)
+			}
+		})
 	}
 
 	<-sigCtx.Done()
@@ -152,6 +157,15 @@ func shutdownAfterNAllocations(s *sdk.SDK, readyIterations, shutdownDelaySec int
 		defer m.Unlock()
 		la := gs.ObjectMeta.Annotations["agones.dev/last-allocated"]
 		log.Printf("Watch Game Server callback fired. State = %s, Last Allocated = %q", gs.Status.State, la)
+		// state := gs.Status.State
+		// if state == "Ready" {
+		// 	time.Sleep(300 * time.Millisecond + time.Duration(rand.Intn(10))*time.Millisecond)
+		// 	s.Allocate()
+		// } else if state == "Allocated" {
+		// 	time.Sleep(100 * time.Millisecond + time.Duration(rand.Intn(100))*time.Millisecond)
+		// 	s.Shutdown()
+		// }
+		
 		if lastAllocated != la {
 			log.Println("Game Server Allocated")
 			lastAllocated = la

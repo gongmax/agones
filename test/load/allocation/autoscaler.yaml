@@ -15,12 +15,12 @@
 apiVersion: "autoscaling.agones.dev/v1"
 kind: FleetAutoscaler
 metadata:
-  name: fleet-autoscaler-scenario-test
+  name: fleet-autoscaler-load-test
 spec:
-  fleetName: scenario-test
+  fleetName: load-test-fleet
   policy:
     type: Buffer
     buffer:
-      bufferSize: 2000
-      minReplicas: 10000
-      maxReplicas: 20000
+      bufferSize: 1000
+      minReplicas: 1000
+      maxReplicas: 6000

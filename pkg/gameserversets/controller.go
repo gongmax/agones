@@ -17,6 +17,7 @@ package gameserversets
 import (
 	"context"
 	"encoding/json"
+	// "strconv"
 	"sync"
 	"time"
 
@@ -55,17 +56,18 @@ var (
 	// ErrNoGameServerSetOwner is returned when a GameServerSet can't be found as an owner
 	// for a GameServer
 	ErrNoGameServerSetOwner = errors.New("No GameServerSet owner for this GameServer")
+	logger  = runtime.NewLoggerWithSource("gsscontroller")
 )
 
 const (
-	maxCreationParalellism         = 16
-	maxGameServerCreationsPerBatch = 64
+	maxCreationParalellism         = 256
+	maxGameServerCreationsPerBatch = 1024
 
-	maxDeletionParallelism         = 64
-	maxGameServerDeletionsPerBatch = 64
+	maxDeletionParallelism         = 256
+	maxGameServerDeletionsPerBatch = 1024
 
 	// maxPodPendingCount is the maximum number of pending pods per game server set
-	maxPodPendingCount = 5000
+	maxPodPendingCount = 30000
 )
 
 // Extensions struct contains what is needed to bind webhook handlers
@@ -275,6 +277,7 @@ func (c *Controller) gameServerEventHandler(obj interface{}) {
 		}
 		return
 	}
+	logger.WithField("gss", gsSet).Info("enqueue gss")
 	c.workerqueue.EnqueueImmediately(gsSet)
 }
 
@@ -335,7 +338,7 @@ func (c *Controller) syncGameServerSet(ctx context.Context, key string) error {
 		WithField("isPartial", isPartial).
 		WithField("status", status).
 		WithFields(fields).
-		Debug("Reconciling GameServerSet")
+		Info("syncGameServerSet")
 	if isPartial {
 		// we've determined that there's work to do, but we've decided not to do all the work in one shot
 		// make sure we get a follow-up, by re-scheduling this GSS in the worker queue immediately before this
@@ -495,13 +498,21 @@ func (c *Controller) deleteGameServers(ctx context.Context, gsSet *agonesv1.Game
 
 	return parallelize(gameServerListToChannel(toDelete), maxDeletionParallelism, func(gs *agonesv1.GameServer) error {
 		// We should not delete the gameservers directly buy set their state to shutdown and let the gameserver controller to delete
-		gsCopy := gs.DeepCopy()
+		// gsCopy := gs.DeepCopy()
+		gsCopy, _ := c.gameServerGetter.GameServers(gs.Namespace).Get(ctx, gs.ObjectMeta.Name, metav1.GetOptions{})
 		gsCopy.Status.State = agonesv1.GameServerStateShutdown
 		_, err := c.gameServerGetter.GameServers(gs.Namespace).Update(ctx, gsCopy, metav1.UpdateOptions{})
 		if err != nil {
 			return errors.Wrapf(err, "error updating gameserver %s from status %s to Shutdown status", gs.ObjectMeta.Name, gs.Status.State)
 		}
 
+		if err != nil {
+			loggerForGameServerSet(c.baseLogger, gsSet).WithField("error", err).Infof("Updated GameServer to Shutdown Error")
+			return errors.Wrapf(err, "error updating gameserver %s from status %s to Shutdown status", gs.ObjectMeta.Name, gs.Status.State)
+		} else {
+			loggerForGameServerSet(c.baseLogger, gsSet).WithField("error", err).Infof("Updated GameServer to Shutdown")
+		}
+		
 		c.stateCache.forGameServerSet(gsSet).deleted(gs)
 		c.recorder.Eventf(gsSet, corev1.EventTypeNormal, "SuccessfulDelete", "Deleted gameserver in state %s: %v", gs.Status.State, gs.ObjectMeta.Name)
 		return nil

@@ -42,6 +42,11 @@ const (
 	objectHasBeenModified     allocErrorCode = "ObjectHasBeenModified"
 	tooManyConcurrentRequests allocErrorCode = "TooManyConcurrentRequests"
 	noAvailableGameServer     allocErrorCode = "NoAvailableGameServer"
+	StorageError	          allocErrorCode = "StorageError"
+	deadLineExceeded          allocErrorCode = "DeadLineExceeded"
+	// connectionTimedOut        allocErrorCode = "ConnectionTimedOut"
+	connectionRefused         allocErrorCode = "ConnectionRefused"
+	errReadingFromServer      allocErrorCode = "ErrReadingFromServer"
 )
 
 var (
@@ -50,6 +55,11 @@ var (
 		objectHasBeenModified:     "the object has been modified",
 		tooManyConcurrentRequests: "too many concurrent requests",
 		noAvailableGameServer:     "no available GameServer to allocate",
+		StorageError:	           "StorageError",
+		deadLineExceeded:          "context deadline exceeded",
+		// connectionTimedOut:        "connection timed out",
+		connectionRefused:         "connection refused",
+		errReadingFromServer:      "allocator seems crashed and restarted",
 	}
 )
 
@@ -83,6 +93,7 @@ func main() {
 	scenarios := readScenarios(*scenariosFile)
 	var totalAllocCnt uint64
 	var totalFailureCnt uint64
+	var totalDuration float64
 
 	totalFailureDtls := allocErrorCodeCntMap()
 	for i, sc := range *scenarios {
@@ -131,13 +142,14 @@ func main() {
 		}
 		totalAllocCnt += scnAllocCnt
 		totalFailureCnt += scnFailureCnt
+		totalDuration += sc.duration.Seconds()
 		for k, v := range scnErrDtls {
 			if k != noerror {
 				logger.Printf("Count: %v\t\tError: %v", v, k)
 			}
 		}
-		logger.Printf("\nScenario Failure Count: %v, Allocation Count: %v", scnFailureCnt, scnAllocCnt)
-		logger.Printf("\nTotal Failure Count: %v, Total Allocation Count: %v", totalFailureCnt, totalAllocCnt)
+		logger.Printf("\n\n%v\nnScenario Failure Count: %v, Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), scnFailureCnt, scnAllocCnt, (float64) (scnFailureCnt) / (float64) (scnAllocCnt), (float64) (scnAllocCnt - scnFailureCnt) / sc.duration.Seconds())
+		time.Sleep(15 * time.Minute)
 	}
 
 	logger.Print("\nFinal Error Totals\n")
@@ -146,7 +158,7 @@ func main() {
 			logger.Printf("Count: %v\t\tError: %v", v, k)
 		}
 	}
-	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v", time.Now(), totalFailureCnt, totalAllocCnt)
+	logger.Printf("\n\n%v\nFinal Total Failure Count: %v, Total Allocation Count: %v, Failure rate: %v, allocation rate: %v", time.Now(), totalFailureCnt, totalAllocCnt, (float64) (totalFailureCnt) / (float64) (totalAllocCnt), (float64) (totalAllocCnt - totalFailureCnt) / totalDuration)
 }
 
 func dialOptions(certFile, keyFile, cacertFile string) (grpc.DialOption, error) {
@@ -188,6 +200,7 @@ func allocate(client pb.AllocationServiceClient) allocErrorCode {
 	resp, err := client.Allocate(ctx, &pb.AllocationRequest{
 		Namespace:           *namespace,
 		MultiClusterSetting: &pb.MultiClusterSetting{Enabled: *multicluster},
+		//Scheduling: pb.AllocationRequest_Distributed,
 	})
 	if err != nil {
 		alErrType := errorType(err)
@@ -257,5 +270,10 @@ func allocErrorCodeCntMap() map[allocErrorCode]uint64 {
 		objectHasBeenModified:     0,
 		tooManyConcurrentRequests: 0,
 		noAvailableGameServer:     0,
+		StorageError:	           0,
+		deadLineExceeded:          0,
+		// connectionTimedOut:        0,
+		connectionRefused:         0,
+		errReadingFromServer:      0,
 	}
 }

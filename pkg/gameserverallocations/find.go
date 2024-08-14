@@ -24,6 +24,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var logger  = runtime.NewLoggerWithSource("client")
+
 // findGameServerForAllocation finds an optimal gameserver, given the
 // set of preferred and required selectors on the GameServerAllocation. This also returns the index
 // that the gameserver was found at in `list`, in case you want to remove it from the list
@@ -31,6 +33,7 @@ import (
 // Distributed: will search in a random order through the list
 // It is assumed that all gameservers passed in, are Ready and not being deleted, and are sorted in Packed priority order
 func findGameServerForAllocation(gsa *allocationv1.GameServerAllocation, list []*agonesv1.GameServer) (*agonesv1.GameServer, int, error) {
+	logger.WithField("gslistlen", len(list)).Info("candidate gs list")
 	type result struct {
 		gs    *agonesv1.GameServer
 		index int
@@ -80,6 +83,7 @@ func findGameServerForAllocation(gsa *allocationv1.GameServerAllocation, list []
 		return nil, -1, errors.Errorf("scheduling strategy of '%s' is not supported", gsa.Spec.Scheduling)
 	}
 
+	// fails := ""
 	loop(list, func(i int, gs *agonesv1.GameServer) {
 		// only search the same namespace
 		if gs.ObjectMeta.Namespace != gsa.ObjectMeta.Namespace {
@@ -99,5 +103,6 @@ func findGameServerForAllocation(gsa *allocationv1.GameServerAllocation, list []
 		}
 	}
 
+	logger.WithField("gslistlen", len(list)).WithField("firstSelector", gsa.Spec.Selectors).WithError(ErrNoGameServer).Error("why no gameserver")
 	return nil, 0, ErrNoGameServer
 }

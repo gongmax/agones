@@ -416,7 +416,7 @@ install: IMAGE_PULL_POLICY := "Always"
 install: PING_SERVICE_TYPE := "LoadBalancer"
 install: ALLOCATOR_SERVICE_TYPE := "LoadBalancer"
 install: CRD_CLEANUP := true
-install: LOG_LEVEL := "debug"
+install: LOG_LEVEL := "info"
 install: EXTERNAL_IP ?= $(shell $(DOCKER_RUN) kubectl get services agones-allocator -n agones-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 install: FEATURE_GATES ?= $(ALPHA_FEATURE_GATES)
 install: SERVICE_MONITOR := false
@@ -437,6 +437,11 @@ install: $(ensure-build-image) install-custom-pull-secret
 		--set agones.featureGates=$(FEATURE_GATES) \
 		--set agones.allocator.service.loadBalancerIP=$(EXTERNAL_IP) \
 		--set agones.metrics.serviceMonitor.enabled=$(SERVICE_MONITOR) \
+		--set agones.controller.apiServerQPS=2400 \
+		--set agones.controller.apiServerQPSBurst=2600 \
+		--set agones.controller.numWorkers=1500 \
+		--set agones.allocator.replicas=3 \
+		--set agones.requireDedicatedNodes=true \
 		$(HELM_ARGS) \
 		agones $(mount_path)/install/helm/agones/
 
